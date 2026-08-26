@@ -47,6 +47,25 @@ window.clickEl = function (id) {
     if (el) el.click();
 };
 
+window.exportPdf = function (filename) {
+    var el = document.querySelector('.resume-preview');
+    if (!el || typeof html2pdf === 'undefined') {
+        window.print();
+        return;
+    }
+
+    var opt = {
+        margin: [0.3, 0.3, 0.3, 0.3],
+        filename: filename || 'resume.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
+        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
+        pagebreak: { mode: ['css', 'legacy'] }
+    };
+
+    html2pdf().set(opt).from(el).save();
+};
+
 window.shortcuts = {
     register: function (dotNetRef) {
         window.__resumeShortcuts = function (e) {

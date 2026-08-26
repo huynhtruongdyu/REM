@@ -28,7 +28,7 @@
         <button class="btn btn-sm btn-primary" @onclick="Save">Save</button>
         <button class="btn btn-sm btn-outline-secondary" @onclick="LoadSample">Sample</button>
         <button class="btn btn-sm btn-outline-danger" @onclick="Clear">Clear</button>
-        <button class="btn btn-sm btn-outline-primary" @onclick="Print">Print / PDF</button>
+        <button class="btn btn-sm btn-outline-primary" @onclick="Print">Download PDF</button>
     </div>
 </div>
 
@@ -140,7 +140,12 @@
         State.SetResume(doc);
     }
 
-    private void Print() => JS.InvokeVoidAsync("window.print");
+    private void Print()
+    {
+        var name = State.Resume.Personal.FullName;
+        var filename = string.IsNullOrWhiteSpace(name) ? "resume.pdf" : $"{name}-Resume.pdf";
+        JS.InvokeVoidAsync("exportPdf", filename);
+    }
 
     public void Dispose()
     {
