@@ -19,13 +19,28 @@
                 title="Redo (Ctrl+Y)">Redo</button>
     </div>
 
-    <div class="d-flex align-items-center gap-1">
+    <div class="d-flex align-items-center gap-2">
         <label class="form-label mb-0 small" for="themeSelect">Theme</label>
         <select id="themeSelect" class="form-select form-select-sm w-auto" value="@State.Resume.Theme"
                 @onchange="OnThemeChange">
             <option value="default">Default</option>
             <option value="minimal">Minimalism</option>
             <option value="modern">Modern</option>
+            <option value="classic">Classic</option>
+            <option value="compact">Compact</option>
+            <option value="elegant">Elegant</option>
+        </select>
+        <label class="form-label mb-0 small" for="schemeSelect">Color</label>
+        <select id="schemeSelect" class="form-select form-select-sm w-auto" value="@State.Resume.ColorScheme"
+                @onchange="OnSchemeChange">
+            <option value="blue">Blue</option>
+            <option value="indigo">Indigo</option>
+            <option value="emerald">Emerald</option>
+            <option value="rose">Rose</option>
+            <option value="amber">Amber</option>
+            <option value="violet">Violet</option>
+            <option value="teal">Teal</option>
+            <option value="slate">Slate</option>
         </select>
     </div>
 
@@ -72,7 +87,7 @@
             @foreach (var r in State.Resumes)
             {
                 <div class="resume-item @(r.Id == State.ActiveId ? "active" : "")" @onclick="() => OpenResume(r.Id)">
-                    <span class="resume-dot" style="background: @ThemeColor(r.Resume.Theme)"></span>
+                    <span class="resume-dot" style="background: @SchemeColor(r.Resume.ColorScheme)"></span>
                     <div class="resume-item-main">
                         @if (_editingId == r.Id)
                         {
@@ -161,6 +176,12 @@
         State.MarkDirty();
     }
 
+    private void OnSchemeChange(ChangeEventArgs e)
+    {
+        State.Resume.ColorScheme = e.Value?.ToString() ?? "blue";
+        State.MarkDirty();
+    }
+
     [JSInvokable]
     public void Undo() => State.Undo();
 
@@ -219,10 +240,15 @@
     }
 
     // ----- Sidebar actions -----
-    private static string ThemeColor(string theme) => theme switch
+    private static string SchemeColor(string scheme) => scheme switch
     {
-        "modern" => "#2563eb",
-        "minimal" => "#111827",
+        "indigo" => "#4f46e5",
+        "emerald" => "#059669",
+        "rose" => "#e11d48",
+        "amber" => "#d97706",
+        "violet" => "#7c3aed",
+        "teal" => "#0d9488",
+        "slate" => "#475569",
         _ => "#1b6ec2"
     };
 

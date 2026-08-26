@@ -19,4 +19,6 @@ public class ResumeDocument
     public List<string> SectionOrder { get; set; } = ["Experience", "Education", "Skills", "Projects", "Certifications", "Languages"];
 
     public string Theme { get; set; } = "default";
+
+    public string ColorScheme { get; set; } = "blue";
 }
