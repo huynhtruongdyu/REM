@@ -5,6 +5,20 @@
     {
       "library": "jquery@4.0.0",
       "destination": "wwwroot\\lib\\jquery"
+    },
+    {
+      "library": "Sortable@1.15.6",
+      "destination": "wwwroot\\lib\\sortablejs",
+      "files": [
+        "Sortable.min.js"
+      ]
+    },
+    {
+      "library": "html2pdf.js@0.10.2",
+      "destination": "wwwroot\\lib\\html2pdf",
+      "files": [
+        "html2pdf.bundle.min.js"
+      ]
     }
   ]
 }
