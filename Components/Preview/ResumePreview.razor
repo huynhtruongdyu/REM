@@ -10,7 +10,28 @@
             {
                 <div class="rp-title">@State.Resume.Personal.Title</div>
             }
-            <div class="rp-contact">@ContactLine()</div>
+            <div class="rp-contact">
+                @{
+                    var contacts = ContactItems();
+                    for (var i = 0; i < contacts.Count; i++)
+                    {
+                        var c = contacts[i];
+                        if (c.href is not null)
+                        {
+                            <a href="@c.href" target="_blank" rel="noopener noreferrer">@c.text</a>
+                        }
+                        else
+                        {
+                            <span>@c.text</span>
+                        }
+
+                        if (i < contacts.Count - 1)
+                        {
+                            <text> | </text>
+                        }
+                    }
+                }
+            </div>
             @if (!string.IsNullOrWhiteSpace(State.Resume.Personal.Summary))
             {
                 <p class="rp-summary">@State.Resume.Personal.Summary</p>
@@ -94,7 +115,18 @@
                                 <div class="rp-entry-head">
                                     <div>
                                         <span class="rp-strong">@x.Name</span>
-                                        @if (!string.IsNullOrWhiteSpace(x.Url)) { <div class="rp-org">@x.Url</div> }
+                                        @if (!string.IsNullOrWhiteSpace(x.Url))
+                                        {
+                                            var url = Href(x.Url);
+                                            if (url is not null)
+                                            {
+                                                <a class="rp-org d-block" href="@url" target="_blank" rel="noopener noreferrer">@x.Url</a>
+                                            }
+                                            else
+                                            {
+                                                <div class="rp-org">@x.Url</div>
+                                            }
+                                        }
                                     </div>
                                     <span class="rp-dates">@DateRange(x.StartDate, x.EndDate, false)</span>
                                 </div>
@@ -159,13 +191,75 @@
             .Any(v => !string.IsNullOrWhiteSpace(v));
     }
 
-    private string ContactLine()
+    private static string? Href(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return null;
+        }
+
+        var v = value.Trim();
+        if (v.StartsWith("javascript:", StringComparison.OrdinalIgnoreCase))
+        {
+            return null;
+        }
+
+        if (v.StartsWith("http://", StringComparison.OrdinalIgnoreCase)
+            || v.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+        {
+            return v;
+        }
+
+        if (v.StartsWith("//"))
+        {
+            return "https:" + v;
+        }
+
+        if (v.Contains('.') || v.StartsWith("www.", StringComparison.OrdinalIgnoreCase))
+        {
+            return "https://" + v.TrimStart('/');
+        }
+
+        return null;
+    }
+
+    private static string? EmailHref(string? email)
+    {
+        if (string.IsNullOrWhiteSpace(email))
+        {
+            return null;
+        }
+
+        if (email!.StartsWith("mailto:", StringComparison.OrdinalIgnoreCase))
+        {
+            return email;
+        }
+
+        return email.Contains('@') ? "mailto:" + email : Href(email);
+    }
+
+    private static string? PhoneHref(string? phone)
+    {
+        if (string.IsNullOrWhiteSpace(phone))
+        {
+            return null;
+        }
+
+        var digits = new string(phone.Where(c => char.IsDigit(c) || c == '+').ToArray());
+        return digits.Length > 0 ? "tel:" + digits : null;
+    }
+
+    private List<(string text, string? href)> ContactItems()
     {
         var p = State.Resume.Personal;
-        return string.Join(" | ", new[]
-        {
-            p.Email, p.Phone, p.Location, p.Website, p.LinkedIn, p.GitHub
-        }.Where(v => !string.IsNullOrWhiteSpace(v)));
+        var items = new List<(string, string?)>();
+        if (!string.IsNullOrWhiteSpace(p.Email)) items.Add((p.Email!, EmailHref(p.Email)));
+        if (!string.IsNullOrWhiteSpace(p.Phone)) items.Add((p.Phone!, PhoneHref(p.Phone)));
+        if (!string.IsNullOrWhiteSpace(p.Location)) items.Add((p.Location!, null));
+        if (!string.IsNullOrWhiteSpace(p.Website)) items.Add((p.Website!, Href(p.Website)));
+        if (!string.IsNullOrWhiteSpace(p.LinkedIn)) items.Add((p.LinkedIn!, Href(p.LinkedIn)));
+        if (!string.IsNullOrWhiteSpace(p.GitHub)) items.Add((p.GitHub!, Href(p.GitHub)));
+        return items;
     }
 
     private static string DateRange(DateOnly? start, DateOnly? end, bool current)

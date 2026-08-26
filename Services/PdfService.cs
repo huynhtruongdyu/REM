@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Text.Json.Nodes;
 using REM.Models;
 
@@ -21,14 +22,10 @@ public static class PdfService
             content.Add(Text(p.Title, "title"));
         }
 
-        var contact = new[]
+        var contactNodes = ContactNodes(p);
+        if (contactNodes.Count > 0)
         {
-            p.Email, p.Phone, p.Location, p.Website, p.LinkedIn, p.GitHub
-        }.Where(v => !string.IsNullOrWhiteSpace(v));
-
-        if (contact.Any())
-        {
-            content.Add(Text(string.Join("   |   ", contact), "contact"));
+            content.Add(new JsonObject { ["text"] = contactNodes });
         }
 
         if (!string.IsNullOrWhiteSpace(p.Summary))
@@ -101,7 +98,15 @@ public static class PdfService
                             AddEntryHead(content, x.Name, "");
                             if (!string.IsNullOrWhiteSpace(x.Url))
                             {
-                                content.Add(Text(x.Url, "muted"));
+                                var url = Href(x.Url);
+                                if (url is not null)
+                                {
+                                    content.Add(new JsonObject { ["text"] = x.Url, ["link"] = url, ["style"] = "muted" });
+                                }
+                                else
+                                {
+                                    content.Add(Text(x.Url, "muted"));
+                                }
                             }
 
                             if (!string.IsNullOrWhiteSpace(x.Description))
@@ -236,5 +241,92 @@ public static class PdfService
         var endText = current ? "Present" : (end.HasValue ? end.Value.ToString("MMM yyyy") : "");
         var startText = start.HasValue ? start.Value.ToString("MMM yyyy") : "";
         return $"{startText} – {endText}";
+    }
+
+    private static JsonArray ContactNodes(PersonalInfo p)
+    {
+        var nodes = new JsonArray();
+        void AddPart(string text, string? href)
+        {
+            if (nodes.Count > 0)
+            {
+                nodes.Add(new JsonObject { ["text"] = "   |   ", ["style"] = "contact" });
+            }
+
+            if (href is not null)
+            {
+                nodes.Add(new JsonObject { ["text"] = text, ["link"] = href, ["style"] = "contact" });
+            }
+            else
+            {
+                nodes.Add(Text(text, "contact"));
+            }
+        }
+
+        if (!string.IsNullOrWhiteSpace(p.Email)) AddPart(p.Email!, EmailHref(p.Email));
+        if (!string.IsNullOrWhiteSpace(p.Phone)) AddPart(p.Phone!, PhoneHref(p.Phone));
+        if (!string.IsNullOrWhiteSpace(p.Location)) AddPart(p.Location!, null);
+        if (!string.IsNullOrWhiteSpace(p.Website)) AddPart(p.Website!, Href(p.Website));
+        if (!string.IsNullOrWhiteSpace(p.LinkedIn)) AddPart(p.LinkedIn!, Href(p.LinkedIn));
+        if (!string.IsNullOrWhiteSpace(p.GitHub)) AddPart(p.GitHub!, Href(p.GitHub));
+        return nodes;
+    }
+
+    private static string? Href(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return null;
+        }
+
+        var v = value.Trim();
+        if (v.StartsWith("javascript:", StringComparison.OrdinalIgnoreCase))
+        {
+            return null;
+        }
+
+        if (v.StartsWith("http://", StringComparison.OrdinalIgnoreCase)
+            || v.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+        {
+            return v;
+        }
+
+        if (v.StartsWith("//"))
+        {
+            return "https:" + v;
+        }
+
+        if (v.Contains('.') || v.StartsWith("www.", StringComparison.OrdinalIgnoreCase))
+        {
+            return "https://" + v.TrimStart('/');
+        }
+
+        return null;
+    }
+
+    private static string? EmailHref(string? email)
+    {
+        if (string.IsNullOrWhiteSpace(email))
+        {
+            return null;
+        }
+
+        if (email!.StartsWith("mailto:", StringComparison.OrdinalIgnoreCase))
+        {
+            return email;
+        }
+
+        return email.Contains('@') ? "mailto:" + email : Href(email);
+    }
+
+    private static string? PhoneHref(string? phone)
+    {
+        if (string.IsNullOrWhiteSpace(phone))
+        {
+            return null;
+        }
+
+        var digits = new string(phone.Where(c => char.IsDigit(c) || c == '+').ToArray());
+        return digits.Length > 0 ? "tel:" + digits : null;
     }
 }

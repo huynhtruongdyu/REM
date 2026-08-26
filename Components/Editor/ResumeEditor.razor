@@ -2,6 +2,11 @@
 
 <PersonalInfoEditor />
 
+<div class="d-flex justify-content-end gap-2 mb-2">
+    <button class="btn btn-sm btn-outline-secondary" @onclick="() => State.CollapseAllSections()">Collapse all</button>
+    <button class="btn btn-sm btn-outline-secondary" @onclick="() => State.ExpandAllSections()">Expand all</button>
+</div>
+
 <SortableList Items="State.Resume.SectionOrder" KeySelector="s => s" OnReorder="ReorderSections" Context="section" Handle=".section-drag-handle">
     <ItemTemplate>
         @switch (section)

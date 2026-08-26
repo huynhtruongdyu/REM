@@ -346,6 +346,12 @@ code {
     color: #1a1a1a;
 }
 
+.resume-preview a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
 .resume-preview h1 {
     font-size: 1.9rem;
     font-weight: 800;

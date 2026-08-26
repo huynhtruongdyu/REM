@@ -13,6 +13,7 @@ public class ResumeState
 
     private readonly Stack<string> _undo = new();
     private readonly Stack<string> _redo = new();
+    private readonly HashSet<string> _collapsedSections = new();
     private readonly SynchronizationContext? _syncContext;
     private readonly System.Timers.Timer _commitTimer;
     private string _committed;
@@ -229,6 +230,38 @@ public class ResumeState
     public void MarkSaved()
     {
         IsDirty = false;
+        NotifyStateChanged();
+    }
+
+    public bool IsSectionCollapsed(string key) => _collapsedSections.Contains(key);
+
+    public void ToggleSectionCollapsed(string key)
+    {
+        if (_collapsedSections.Contains(key))
+        {
+            _collapsedSections.Remove(key);
+        }
+        else
+        {
+            _collapsedSections.Add(key);
+        }
+
+        NotifyStateChanged();
+    }
+
+    public void CollapseAllSections()
+    {
+        foreach (var section in Library.GetActive()?.Resume.SectionOrder ?? [])
+        {
+            _collapsedSections.Add(section);
+        }
+
+        NotifyStateChanged();
+    }
+
+    public void ExpandAllSections()
+    {
+        _collapsedSections.Clear();
         NotifyStateChanged();
     }
 
