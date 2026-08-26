@@ -47,44 +47,31 @@ window.clickEl = function (id) {
     if (el) el.click();
 };
 
-window.getPdfOptions = function () {
-    return {
+window.exportPdf = function (filename) {
+    window.print();
+};
+
+window.previewPdf = function () {
+    window.print();
+};
+
+window.exportImagePdf = function (filename) {
+    var el = document.querySelector('.resume-preview');
+    if (!el || typeof html2pdf === 'undefined') {
+        window.print();
+        return;
+    }
+
+    var opt = {
         margin: [0.3, 0.3, 0.3, 0.3],
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
         jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
-        pagebreak: { mode: ['css', 'legacy'] }
+        pagebreak: { mode: ['css', 'legacy'], avoid: ['.rp-header', '.rp-section', '.rp-entry'] }
     };
-};
-
-window.exportPdf = function (filename) {
-    var el = document.querySelector('.resume-preview');
-    if (!el || typeof html2pdf === 'undefined') {
-        window.print();
-        return;
-    }
-
-    var opt = window.getPdfOptions();
     opt.filename = filename || 'resume.pdf';
 
     html2pdf().set(opt).from(el).save();
-};
-
-window.previewPdf = function () {
-    var el = document.querySelector('.resume-preview');
-    if (!el || typeof html2pdf === 'undefined') {
-        window.print();
-        return;
-    }
-
-    html2pdf().set(window.getPdfOptions()).from(el).outputPdf('blob').then(function (blob) {
-        var url = URL.createObjectURL(blob);
-        var tab = window.open(url, '_blank');
-        if (!tab) {
-            location.href = url;
-        }
-        setTimeout(function () { URL.revokeObjectURL(url); }, 60000);
-    });
 };
 
 window.shortcuts = {
