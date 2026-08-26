@@ -20,6 +20,11 @@
 
     @foreach (var section in State.Resume.SectionOrder)
     {
+        if (State.Resume.HiddenSections.Contains(section))
+        {
+            continue;
+        }
+
         switch (section)
         {
             case SectionDefinitions.Experience:

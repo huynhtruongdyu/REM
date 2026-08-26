@@ -47,8 +47,8 @@ window.clickEl = function (id) {
     if (el) el.click();
 };
 
-window.exportPdf = function (filename) {
-    printWithoutTitle();
+window.setDocumentTitle = function (title) {
+    document.title = title || 'Resume Builder — REM';
 };
 
 window.previewPdf = function () {

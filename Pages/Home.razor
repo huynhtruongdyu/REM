@@ -7,7 +7,7 @@
 @implements IDisposable
 
 <div class="builder-toolbar d-flex flex-wrap align-items-center gap-2 px-3 py-2 border-bottom bg-white">
-    <strong>Resume Builder</strong>
+    <strong>REM</strong>
     <span class="badge @(State.IsDirty ? "bg-warning text-dark" : "bg-success")">
         @(State.IsDirty ? "Unsaved" : "Saved")
     </span>
@@ -61,29 +61,30 @@
                     </li>
                     <li><button class="dropdown-item"
                                     @onclick="async () => { await DownloadMarkdown(); CloseExportMenu(); }">Markdown</button></li>
-                </ul>
-            }
-            <button class="btn btn-outline-secondary" @onclick="Import">Import</button>
-            <button class="btn btn-outline-secondary dropdown-toggle" type="button" @onclick="ToggleExportJsonMenu"
-                    aria-expanded="@_exportJsonMenuOpen">
-                Export
-            </button>
-            @if (_exportJsonMenuOpen)
+                    </ul>
+                }
+                @* <button class="btn btn-outline-secondary" @onclick="PreviewPdf">Preview</button> *@
+                <button class="btn btn-outline-secondary" @onclick="Import">Import</button>
+                <button class="btn btn-outline-secondary dropdown-toggle" type="button" @onclick="ToggleExportJsonMenu"
+                        aria-expanded="@_exportJsonMenuOpen">
+                    Export
+                </button>
+                @if (_exportJsonMenuOpen)
+                {
+                    <ul class="dropdown-menu dropdown-menu-end show">
+                        <li><button class="dropdown-item"
+                                        @onclick="async () => { await ExportResume(); CloseExportJsonMenu(); }">Resume (JSON)</button>
+                        </li>
+                        <li><button class="dropdown-item"
+                                        @onclick="async () => { await ExportLibrary(); CloseExportJsonMenu(); }">Library (JSON)</button>
+                        </li>
+                    </ul>
+                }
+            </div>
+            @if (_exportMenuOpen || _exportJsonMenuOpen)
             {
-                <ul class="dropdown-menu dropdown-menu-end show">
-                    <li><button class="dropdown-item"
-                                    @onclick="async () => { await ExportResume(); CloseExportJsonMenu(); }">Resume (JSON)</button>
-                    </li>
-                    <li><button class="dropdown-item"
-                                    @onclick="async () => { await ExportLibrary(); CloseExportJsonMenu(); }">Library (JSON)</button>
-                    </li>
-                </ul>
+                <div class="dropdown-backdrop" @onclick="() => { CloseExportMenu(); CloseExportJsonMenu(); }"></div>
             }
-        </div>
-        @if (_exportMenuOpen || _exportJsonMenuOpen)
-        {
-            <div class="dropdown-backdrop" @onclick="() => { CloseExportMenu(); CloseExportJsonMenu(); }"></div>
-        }
             <div class="btn-group btn-group-sm">
                 <button class="btn btn-outline-success" @onclick="Save">Save</button>
                 <button class="btn btn-outline-secondary" @onclick="LoadSample">Load Sample</button>
@@ -196,8 +197,15 @@
     private void OnStateChanged()
     {
         StateHasChanged();
+        JS.InvokeVoidAsync("setDocumentTitle", TabTitle());
         _saveTimer?.Stop();
         _saveTimer?.Start();
+    }
+
+    private string TabTitle()
+    {
+        var name = State.Library.GetActive()?.Name;
+        return string.IsNullOrWhiteSpace(name) ? "Resume Builder — REM" : $"{name} — Resume Builder — REM";
     }
 
     private void OnHistoryChanged() => StateHasChanged();

@@ -3,7 +3,11 @@
 
 <div class="card mb-3 editor-section">
     <div class="card-header d-flex align-items-center gap-2">
-        <span class="section-drag-handle flex-grow-1">@Title</span>
+        <span class="section-drag-handle flex-grow-1 @(IsHidden() ? "text-decoration-line-through text-muted" : "")">@Title</span>
+        <button type="button" class="btn btn-sm btn-link py-0 px-1 section-visibility-toggle"
+                title="Show or hide this section in the resume" @onclick="ToggleVisibility" @onclick:stopPropagation>
+            @(IsHidden() ? "Show" : "Hide")
+        </button>
         <button type="button" class="btn btn-sm btn-link py-0 px-1 collapse-toggle" title="Collapse / expand"
                 @onclick="ToggleCollapse" @onclick:stopPropagation>
             @(_collapsed ? "▸" : "▾")
@@ -30,6 +34,9 @@
     public string Title { get; set; } = "";
 
     [Parameter]
+    public string SectionKey { get; set; } = "";
+
+    [Parameter]
     public IList<TItem> Items { get; set; } = [];
 
     [Parameter]
@@ -42,6 +49,26 @@
     public RenderFragment<TItem> ItemFields { get; set; } = default!;
 
     private bool _collapsed;
+
+    private string Key => string.IsNullOrEmpty(SectionKey) ? Title : SectionKey;
+
+    private bool IsHidden() => State.Resume.HiddenSections.Contains(Key);
+
+    private void ToggleVisibility()
+    {
+        var key = Key;
+        var hidden = State.Resume.HiddenSections;
+        if (hidden.Contains(key))
+        {
+            hidden.Remove(key);
+        }
+        else
+        {
+            hidden.Add(key);
+        }
+
+        State.MarkDirty();
+    }
 
     private void ToggleCollapse() => _collapsed = !_collapsed;
 

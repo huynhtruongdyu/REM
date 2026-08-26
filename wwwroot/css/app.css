@@ -145,6 +145,11 @@ code {
     overflow-y: auto;
 }
 
+.editor-pane .form-label {
+    font-weight: 600;
+    color: #1f2937;
+}
+
 .drag-handle,
 .section-drag-handle {
     cursor: grab;

@@ -33,8 +33,6 @@ public class ResumeState
 
     public IEnumerable<ResumeEntry> Resumes => Library.Resumes;
 
-    public string ActiveName => Library.GetActive()?.Name ?? "";
-
     public event Action? OnChange;
 
     public event Action? OnHistoryChange;

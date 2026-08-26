@@ -39,6 +39,11 @@ public static class PdfService
 
         foreach (var section in doc.SectionOrder)
         {
+            if (doc.HiddenSections.Contains(section))
+            {
+                continue;
+            }
+
             switch (section)
             {
                 case SectionDefinitions.Experience:
