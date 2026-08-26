@@ -1,24 +1,22 @@
 @inject ResumeState State
 @implements IDisposable
 
-<div class="resume-preview p-4">
-    <header class="resume-header mb-3">
-        <h1 class="mb-0">@State.Resume.Personal.FullName</h1>
-        @if (!string.IsNullOrWhiteSpace(State.Resume.Personal.Title))
-        {
-            <div class="resume-title">@State.Resume.Personal.Title</div>
-        }
-        <div class="resume-contact mt-1">
-            @Join(new[] { State.Resume.Personal.Email, State.Resume.Personal.Phone, State.Resume.Personal.Location })
-            @if (!string.IsNullOrWhiteSpace(State.Resume.Personal.Website)) { <span>| @State.Resume.Personal.Website</span> }
-            @if (!string.IsNullOrWhiteSpace(State.Resume.Personal.LinkedIn)) { <span>| @State.Resume.Personal.LinkedIn</span> }
-            @if (!string.IsNullOrWhiteSpace(State.Resume.Personal.GitHub)) { <span>| @State.Resume.Personal.GitHub</span> }
-        </div>
-        @if (!string.IsNullOrWhiteSpace(State.Resume.Personal.Summary))
-        {
-            <p class="mt-2">@State.Resume.Personal.Summary</p>
-        }
-    </header>
+<div class="resume-preview">
+    @if (HasPersonal())
+    {
+        <header class="rp-header">
+            <h1>@State.Resume.Personal.FullName</h1>
+            @if (!string.IsNullOrWhiteSpace(State.Resume.Personal.Title))
+            {
+                <div class="rp-title">@State.Resume.Personal.Title</div>
+            }
+            <div class="rp-contact">@ContactLine()</div>
+            @if (!string.IsNullOrWhiteSpace(State.Resume.Personal.Summary))
+            {
+                <p class="rp-summary">@State.Resume.Personal.Summary</p>
+            }
+        </header>
+    }
 
     @foreach (var section in State.Resume.SectionOrder)
     {
@@ -27,16 +25,16 @@
             case SectionDefinitions.Experience:
                 if (State.Resume.Experiences.Count > 0)
                 {
-                    <section class="resume-section mb-3">
+                    <section class="rp-section">
                         <h2>Experience</h2>
                         @foreach (var x in State.Resume.Experiences)
                         {
-                            <div class="resume-item">
-                                <div class="d-flex justify-content-between">
-                                    <strong>@x.Position @(string.IsNullOrWhiteSpace(x.Company) ? "" : $"· {x.Company}")</strong>
-                                    <span class="text-muted">@DateRange(x.StartDate, x.EndDate, x.IsCurrent)</span>
+                            <div class="rp-entry">
+                                <div class="rp-entry-head">
+                                    <span class="rp-strong">@x.Position@(string.IsNullOrWhiteSpace(x.Company) ? "" : $", {x.Company}")</span>
+                                    <span class="rp-dates">@DateRange(x.StartDate, x.EndDate, x.IsCurrent)</span>
                                 </div>
-                                @if (!string.IsNullOrWhiteSpace(x.Description)) { <p class="mb-0">@x.Description</p> }
+                                @if (!string.IsNullOrWhiteSpace(x.Description)) { <p class="rp-desc">@x.Description</p> }
                             </div>
                         }
                     </section>
@@ -45,17 +43,18 @@
             case SectionDefinitions.Education:
                 if (State.Resume.Educations.Count > 0)
                 {
-                    <section class="resume-section mb-3">
+                    <section class="rp-section">
                         <h2>Education</h2>
                         @foreach (var x in State.Resume.Educations)
                         {
-                            <div class="resume-item">
-                                <div class="d-flex justify-content-between">
-                                    <strong>@x.Degree @(string.IsNullOrWhiteSpace(x.FieldOfStudy) ? "" : $"in {x.FieldOfStudy}")</strong>
-                                    <span class="text-muted">@DateRange(x.StartDate, x.EndDate, false)</span>
+                            <div class="rp-entry">
+                                <div class="rp-entry-head">
+                                    <span class="rp-strong">@x.Degree@(string.IsNullOrWhiteSpace(x.FieldOfStudy) ? "" : $", {x.FieldOfStudy}")</span>
+                                    <span class="rp-dates">@DateRange(x.StartDate, x.EndDate, false)</span>
                                 </div>
-                                <div>@x.Institution</div>
-                                @if (!string.IsNullOrWhiteSpace(x.Description)) { <p class="mb-0">@x.Description</p> }
+                                @if (!string.IsNullOrWhiteSpace(x.Institution)) { <div class="rp-org">@x.Institution</div> }
+                                @if (!string.IsNullOrWhiteSpace(x.Gpa)) { <div class="rp-muted">GPA: @x.Gpa</div> }
+                                @if (!string.IsNullOrWhiteSpace(x.Description)) { <p class="rp-desc">@x.Description</p> }
                             </div>
                         }
                     </section>
@@ -64,31 +63,31 @@
             case SectionDefinitions.Skills:
                 if (State.Resume.Skills.Count > 0)
                 {
-                    <section class="resume-section mb-3">
+                    <section class="rp-section">
                         <h2>Skills</h2>
-                        <ul class="list-inline">
-                            @foreach (var x in State.Resume.Skills)
-                            {
-                                <li class="list-inline-item border rounded px-2 py-1">@x.Name@(string.IsNullOrWhiteSpace(x.Proficiency) ? "" : $" ({x.Proficiency})")</li>
-                            }
-                        </ul>
+                        <p class="rp-line">
+                            @string.Join(", ", State.Resume.Skills
+                                .Where(s => !string.IsNullOrWhiteSpace(s.Name))
+                                .Select(s => string.IsNullOrWhiteSpace(s.Proficiency) ? s.Name : $"{s.Name} ({s.Proficiency})"))
+                        </p>
                     </section>
                 }
                 break;
             case SectionDefinitions.Projects:
                 if (State.Resume.Projects.Count > 0)
                 {
-                    <section class="resume-section mb-3">
+                    <section class="rp-section">
                         <h2>Projects</h2>
                         @foreach (var x in State.Resume.Projects)
                         {
-                            <div class="resume-item">
-                                <div class="d-flex justify-content-between">
-                                    <strong>@x.Name</strong>
-                                    <span class="text-muted">@DateRange(x.StartDate, x.EndDate, false)</span>
+                            <div class="rp-entry">
+                                <div class="rp-entry-head">
+                                    <span class="rp-strong">@x.Name</span>
+                                    <span class="rp-dates">@DateRange(x.StartDate, x.EndDate, false)</span>
                                 </div>
-                                @if (!string.IsNullOrWhiteSpace(x.Description)) { <p class="mb-0">@x.Description</p> }
-                                @if (x.Technologies.Count > 0) { <div class="text-muted small">@string.Join(", ", x.Technologies)</div> }
+                                @if (!string.IsNullOrWhiteSpace(x.Url)) { <div class="rp-muted">@x.Url</div> }
+                                @if (!string.IsNullOrWhiteSpace(x.Description)) { <p class="rp-desc">@x.Description</p> }
+                                @if (x.Technologies.Count > 0) { <div class="rp-muted">@string.Join(", ", x.Technologies)</div> }
                             </div>
                         }
                     </section>
@@ -97,16 +96,17 @@
             case SectionDefinitions.Certifications:
                 if (State.Resume.Certifications.Count > 0)
                 {
-                    <section class="resume-section mb-3">
+                    <section class="rp-section">
                         <h2>Certifications</h2>
                         @foreach (var x in State.Resume.Certifications)
                         {
-                            <div class="resume-item">
-                                <div class="d-flex justify-content-between">
-                                    <strong>@x.Name</strong>
-                                    <span class="text-muted">@x.IssueDate.Year@(x.ExpiryDate.HasValue ? $" – {x.ExpiryDate.Value.Year}" : "")</span>
+                            <div class="rp-entry">
+                                <div class="rp-entry-head">
+                                    <span class="rp-strong">@x.Name</span>
+                                    <span class="rp-dates">@x.IssueDate.Year@(x.ExpiryDate.HasValue ? $" – {x.ExpiryDate.Value.Year}" : "")</span>
                                 </div>
-                                <div>@x.Issuer</div>
+                                @if (!string.IsNullOrWhiteSpace(x.Issuer)) { <div class="rp-org">@x.Issuer</div> }
+                                @if (!string.IsNullOrWhiteSpace(x.CredentialId)) { <div class="rp-muted">Credential ID: @x.CredentialId</div> }
                             </div>
                         }
                     </section>
@@ -115,14 +115,13 @@
             case SectionDefinitions.Languages:
                 if (State.Resume.Languages.Count > 0)
                 {
-                    <section class="resume-section mb-3">
+                    <section class="rp-section">
                         <h2>Languages</h2>
-                        <ul class="list-inline">
-                            @foreach (var x in State.Resume.Languages)
-                            {
-                                <li class="list-inline-item border rounded px-2 py-1">@x.Name@(string.IsNullOrWhiteSpace(x.Proficiency) ? "" : $" ({x.Proficiency})")</li>
-                            }
-                        </ul>
+                        <p class="rp-line">
+                            @string.Join(", ", State.Resume.Languages
+                                .Where(l => !string.IsNullOrWhiteSpace(l.Name))
+                                .Select(l => string.IsNullOrWhiteSpace(l.Proficiency) ? l.Name : $"{l.Name} ({l.Proficiency})"))
+                        </p>
                     </section>
                 }
                 break;
@@ -141,10 +140,20 @@
         State.OnChange -= StateHasChanged;
     }
 
-    private static string Join(string[] values)
+    private bool HasPersonal()
     {
-        var parts = values.Where(v => !string.IsNullOrWhiteSpace(v));
-        return string.Join(" | ", parts);
+        var p = State.Resume.Personal;
+        return new[] { p.FullName, p.Title, p.Email, p.Phone, p.Location, p.Website, p.LinkedIn, p.GitHub, p.Summary }
+            .Any(v => !string.IsNullOrWhiteSpace(v));
+    }
+
+    private string ContactLine()
+    {
+        var p = State.Resume.Personal;
+        return string.Join(" | ", new[]
+        {
+            p.Email, p.Phone, p.Location, p.Website, p.LinkedIn, p.GitHub
+        }.Where(v => !string.IsNullOrWhiteSpace(v)));
     }
 
     private static string DateRange(DateOnly? start, DateOnly? end, bool current)

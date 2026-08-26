@@ -32,6 +32,12 @@ public class ResumeState
         NotifyStateChanged();
     }
 
+    public void MarkSaved()
+    {
+        IsDirty = false;
+        NotifyStateChanged();
+    }
+
     private EditContext CreateContext(ResumeDocument model)
     {
         var context = new EditContext(model);

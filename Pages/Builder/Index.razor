@@ -13,6 +13,8 @@
     <div class="ms-auto d-flex gap-2">
         <button class="btn btn-sm btn-outline-secondary" @onclick="Import">Import</button>
         <button class="btn btn-sm btn-outline-secondary" @onclick="Export">Export</button>
+        <button class="btn btn-sm btn-primary" @onclick="Save">Save</button>
+        <button class="btn btn-sm btn-outline-danger" @onclick="Clear">Clear</button>
         <button class="btn btn-sm btn-outline-primary" @onclick="Print">Print / PDF</button>
     </div>
 </div>
@@ -56,6 +58,24 @@
     }
 
     private async Task Export() => await Storage.ExportAsync(State.Resume);
+
+    private async Task Save()
+    {
+        await Storage.SaveAsync(State.Resume);
+        State.MarkSaved();
+    }
+
+    private async Task Clear()
+    {
+        var confirmed = await JS.InvokeAsync<bool>("confirm", "Clear all resume data? This cannot be undone.");
+        if (!confirmed)
+        {
+            return;
+        }
+
+        State.SetResume(new ResumeDocument());
+        await Storage.SaveAsync(State.Resume);
+    }
 
     private void Import() => JS.InvokeVoidAsync("clickEl", "importFile");
 
