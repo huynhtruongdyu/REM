@@ -6,7 +6,7 @@ namespace REM.Services;
 
 public class StorageService
 {
-    private const string Key = "rem-resume";
+    private const string LibraryKey = "rem-library";
 
     private readonly IJSRuntime _js;
 
@@ -20,18 +20,27 @@ public class StorageService
         WriteIndented = true
     };
 
-    public async Task SaveAsync(ResumeDocument doc)
-        => await _js.InvokeVoidAsync("storage.save", Key, JsonSerializer.Serialize(doc, Options));
+    public async Task SaveLibraryAsync(ResumeLibrary library)
+        => await _js.InvokeVoidAsync("storage.save", LibraryKey, JsonSerializer.Serialize(library, Options));
 
-    public async Task<ResumeDocument?> LoadAsync()
+    public async Task<ResumeLibrary> LoadLibraryAsync()
     {
-        var json = await _js.InvokeAsync<string?>("storage.load", Key);
-        if (string.IsNullOrWhiteSpace(json))
+        var json = await _js.InvokeAsync<string?>("storage.load", LibraryKey);
+        if (!string.IsNullOrWhiteSpace(json))
         {
-            return null;
+            var lib = JsonSerializer.Deserialize<ResumeLibrary>(json);
+            if (lib is not null)
+            {
+                return lib;
+            }
         }
 
-        return JsonSerializer.Deserialize<ResumeDocument>(json);
+        // Seed a fresh library with the sample resume.
+        var seeded = new ResumeLibrary();
+        var seed = new ResumeEntry { Name = "My Resume", Resume = SampleResume.Create() };
+        seeded.Resumes.Add(seed);
+        seeded.ActiveId = seed.Id;
+        return seeded;
     }
 
     public async Task ExportAsync(ResumeDocument doc)

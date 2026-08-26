@@ -1,5 +1,6 @@
 @page "/"
 @layout BuilderLayout
+@using System.Linq
 @inject ResumeState State
 @inject StorageService Storage
 @inject IJSRuntime JS
@@ -45,12 +46,70 @@
     </div>
 </div>
 
-<div class="builder-split">
-    <div class="editor-pane p-3">
-        <ResumeEditor @key="State.Resume" />
-    </div>
-    <div class="preview-pane bg-light p-3">
-        <ResumePreview @key="State.Resume" />
+<div class="builder-body d-flex">
+    <aside class="resume-sidebar">
+        <div class="sidebar-head">
+            <div class="sidebar-title">
+                <strong>Resumes</strong>
+                <span class="resume-count">@State.Resumes.Count()</span>
+            </div>
+            <div class="dropdown">
+                <button class="btn btn-sm btn-primary" title="New resume" @onclick="ToggleNewMenu">+ New</button>
+                @if (_newMenuOpen)
+                {
+                    <ul class="dropdown-menu show dropdown-menu-end">
+                        <li><button class="dropdown-item" @onclick="() => NewResume(false)">Blank resume</button></li>
+                        <li><button class="dropdown-item" @onclick="() => NewResume(true)">From sample</button></li>
+                    </ul>
+                }
+            </div>
+            @if (_newMenuOpen)
+            {
+                <div class="dropdown-backdrop" @onclick="CloseNewMenu"></div>
+            }
+        </div>
+        <div class="sidebar-list flex-grow-1 overflow-auto">
+            @foreach (var r in State.Resumes)
+            {
+                <div class="resume-item @(r.Id == State.ActiveId ? "active" : "")" @onclick="() => OpenResume(r.Id)">
+                    <span class="resume-dot" style="background: @ThemeColor(r.Resume.Theme)"></span>
+                    <div class="resume-item-main">
+                        @if (_editingId == r.Id)
+                        {
+                            <input class="form-control form-control-sm resume-rename"
+                                   @bind="_editingName" @bind:event="oninput"
+                                   @onclick:stopPropagation
+                                   @onblur="() => CommitRename(r.Id)"
+                                   @onkeydown="OnRenameKey" />
+                        }
+                        else
+                        {
+                            <div class="resume-name" title="Double-click to rename" @ondblclick="e => StartRename(e, r.Id)" @ondblclick:stopPropagation>@r.Name</div>
+                            <div class="resume-meta">@RelativeTime(r.UpdatedAt)</div>
+                        }
+                    </div>
+                    @if (_editingId != r.Id)
+                    {
+                        <div class="resume-item-actions">
+                            <button class="btn btn-sm btn-icon rename-btn" title="Rename" @onclick="e => StartRename(e, r.Id)" @onclick:stopPropagation>✎</button>
+                            <span class="hover-actions">
+                                <button class="btn btn-sm btn-icon" title="Duplicate" @onclick="e => Duplicate(e, r.Id)" @onclick:stopPropagation>⧉</button>
+                                <button class="btn btn-sm btn-icon text-danger" title="Delete" @onclick="e => Delete(e, r.Id)" @onclick:stopPropagation>🗑</button>
+                            </span>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </aside>
+
+    <div class="builder-split flex-grow-1">
+        <div class="editor-pane p-3">
+            <ResumeEditor @key="State.Resume" />
+        </div>
+        <div class="preview-pane bg-light p-3">
+            <ResumePreview @key="State.Resume" />
+        </div>
     </div>
 </div>
 
@@ -59,13 +118,15 @@
 @code {
     private System.Timers.Timer? _saveTimer;
     private DotNetObjectReference<Home>? _dotNetRef;
+    private string? _editingId;
+    private string _editingName = "";
 
     protected override void OnInitialized()
     {
         State.OnChange += OnStateChanged;
         State.OnHistoryChange += OnHistoryChanged;
         _saveTimer = new System.Timers.Timer(600) { AutoReset = false };
-        _saveTimer.Elapsed += async (_, _) => await InvokeAsync(async () => await Storage.SaveAsync(State.Resume));
+        _saveTimer.Elapsed += async (_, _) => await InvokeAsync(async () => await Storage.SaveLibraryAsync(State.Library));
         _ = LoadAsync();
     }
 
@@ -80,14 +141,9 @@
 
     private async Task LoadAsync()
     {
-        var doc = await Storage.LoadAsync();
-        if (doc is null)
-        {
-            doc = SampleResume.Create();
-            await Storage.SaveAsync(doc);
-        }
-
-        State.SetResume(doc, recordHistory: false);
+        var lib = await Storage.LoadLibraryAsync();
+        State.LoadLibrary(lib);
+        await Storage.SaveLibraryAsync(State.Library);
     }
 
     private void OnStateChanged()
@@ -115,14 +171,14 @@
 
     private async Task Save()
     {
-        await Storage.SaveAsync(State.Resume);
+        await Storage.SaveLibraryAsync(State.Library);
         State.MarkSaved();
     }
 
     private async Task LoadSample()
     {
         State.SetResume(SampleResume.Create());
-        await Storage.SaveAsync(State.Resume);
+        await Storage.SaveLibraryAsync(State.Library);
     }
 
     private async Task Clear()
@@ -134,7 +190,7 @@
         }
 
         State.SetResume(new ResumeDocument());
-        await Storage.SaveAsync(State.Resume);
+        await Storage.SaveLibraryAsync(State.Library);
     }
 
     private void Import() => JS.InvokeVoidAsync("clickEl", "importFile");
@@ -160,6 +216,100 @@
         var name = State.Resume.Personal.FullName;
         var filename = string.IsNullOrWhiteSpace(name) ? "resume.pdf" : $"{name}-Resume.pdf";
         JS.InvokeVoidAsync("exportPdf", filename);
+    }
+
+    // ----- Sidebar actions -----
+    private static string ThemeColor(string theme) => theme switch
+    {
+        "modern" => "#2563eb",
+        "minimal" => "#111827",
+        _ => "#1b6ec2"
+    };
+
+    private void OpenResume(string id) => State.SetActive(id);
+
+    private void NewResume(bool fromSample)
+    {
+        State.CreateResume(fromSample ? "Resume (sample)" : "New Resume", fromSample);
+        _newMenuOpen = false;
+    }
+
+    private bool _newMenuOpen;
+
+    private void ToggleNewMenu() => _newMenuOpen = !_newMenuOpen;
+
+    private void CloseNewMenu() => _newMenuOpen = false;
+
+    private void StartRename(MouseEventArgs _, string id)
+    {
+        _editingId = id;
+        _editingName = State.Resumes.First(r => r.Id == id).Name;
+    }
+
+    private void OnRenameKey(KeyboardEventArgs e)
+    {
+        if (_editingId is null)
+        {
+            return;
+        }
+
+        if (e.Key == "Enter")
+        {
+            CommitRename(_editingId);
+        }
+        else if (e.Key == "Escape")
+        {
+            _editingId = null;
+        }
+    }
+
+    private void CommitRename(string id)
+    {
+        if (_editingId != id)
+        {
+            return;
+        }
+
+        State.RenameResume(id, _editingName);
+        _editingId = null;
+    }
+
+    private void Duplicate(MouseEventArgs _, string id) => State.DuplicateResume(id);
+
+    private async Task Delete(MouseEventArgs _, string id)
+    {
+        var entry = State.Resumes.First(r => r.Id == id);
+        var ok = await JS.InvokeAsync<bool>("confirm", $"Delete '{entry.Name}'? This cannot be undone.");
+        if (ok)
+        {
+            State.DeleteResume(id);
+        }
+    }
+
+    private static string RelativeTime(DateTime dt)
+    {
+        var diff = DateTime.Now - dt;
+        if (diff.TotalSeconds < 60)
+        {
+            return "just now";
+        }
+
+        if (diff.TotalMinutes < 60)
+        {
+            return $"{(int)diff.TotalMinutes}m ago";
+        }
+
+        if (diff.TotalHours < 24)
+        {
+            return $"{(int)diff.TotalHours}h ago";
+        }
+
+        if (diff.TotalDays < 30)
+        {
+            return $"{(int)diff.TotalDays}d ago";
+        }
+
+        return dt.ToString("MMM d");
     }
 
     public void Dispose()

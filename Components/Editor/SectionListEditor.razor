@@ -2,8 +2,14 @@
 @inject ResumeState State
 
 <div class="card mb-3 editor-section">
-    <div class="card-header section-drag-handle">@Title</div>
-    <div class="card-body">
+    <div class="card-header d-flex align-items-center gap-2">
+        <span class="section-drag-handle flex-grow-1">@Title</span>
+        <button type="button" class="btn btn-sm btn-link py-0 px-1 collapse-toggle" title="Collapse / expand"
+                @onclick="ToggleCollapse" @onclick:stopPropagation>
+            @(_collapsed ? "▸" : "▾")
+        </button>
+    </div>
+    <div class="card-body @(_collapsed ? "d-none" : "")">
         <SortableList Items="Items" KeySelector="KeySelector" OnReorder="Reorder" Context="item">
             <ItemTemplate>
                 <div class="border rounded p-2 mb-2">
@@ -34,6 +40,10 @@
 
     [Parameter]
     public RenderFragment<TItem> ItemFields { get; set; } = default!;
+
+    private bool _collapsed;
+
+    private void ToggleCollapse() => _collapsed = !_collapsed;
 
     private void Add()
     {

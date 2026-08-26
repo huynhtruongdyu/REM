@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
 using System.Threading;
 using Microsoft.AspNetCore.Components.Forms;
@@ -25,6 +26,14 @@ public class ResumeState
     public bool CanUndo => _undo.Count > 0;
 
     public bool CanRedo => _redo.Count > 0;
+
+    public ResumeLibrary Library { get; private set; } = new();
+
+    public string? ActiveId { get; private set; }
+
+    public IEnumerable<ResumeEntry> Resumes => Library.Resumes;
+
+    public string ActiveName => Library.GetActive()?.Name ?? "";
 
     public event Action? OnChange;
 
@@ -53,6 +62,111 @@ public class ResumeState
         };
     }
 
+    public void LoadLibrary(ResumeLibrary library)
+    {
+        Library = library;
+        var active = Library.GetActive();
+        if (active is null)
+        {
+            active = new ResumeEntry { Name = "My Resume", Resume = SampleResume.Create() };
+            Library.Resumes.Add(active);
+            Library.ActiveId = active.Id;
+        }
+
+        ActiveId = active.Id;
+        Library.ActiveId = active.Id;
+        SetResume(active.Resume, recordHistory: false);
+        _undo.Clear();
+        _redo.Clear();
+    }
+
+    public void SetActive(string id)
+    {
+        if (id == ActiveId)
+        {
+            return;
+        }
+
+        var entry = Library.Resumes.FirstOrDefault(r => r.Id == id);
+        if (entry is null)
+        {
+            return;
+        }
+
+        ActiveId = id;
+        Library.ActiveId = id;
+        SetResume(entry.Resume, recordHistory: false);
+        _undo.Clear();
+        _redo.Clear();
+    }
+
+    public void CreateResume(string name, bool fromSample)
+    {
+        var doc = fromSample ? SampleResume.Create() : new ResumeDocument();
+        var entry = new ResumeEntry { Name = name, Resume = doc };
+        Library.Resumes.Add(entry);
+        ActiveId = entry.Id;
+        Library.ActiveId = entry.Id;
+        SetResume(doc, recordHistory: false);
+        _undo.Clear();
+        _redo.Clear();
+    }
+
+    public void DuplicateResume(string id)
+    {
+        var source = Library.Resumes.FirstOrDefault(r => r.Id == id);
+        if (source is null)
+        {
+            return;
+        }
+
+        var clone = JsonSerializer.Deserialize<ResumeDocument>(JsonSerializer.Serialize(source.Resume, JsonOptions))!;
+        var entry = new ResumeEntry { Name = source.Name + " copy", Resume = clone };
+        Library.Resumes.Add(entry);
+        ActiveId = entry.Id;
+        Library.ActiveId = entry.Id;
+        SetResume(clone, recordHistory: false);
+        _undo.Clear();
+        _redo.Clear();
+    }
+
+    public void RenameResume(string id, string name)
+    {
+        var entry = Library.Resumes.FirstOrDefault(r => r.Id == id);
+        if (entry is null)
+        {
+            return;
+        }
+
+        entry.Name = string.IsNullOrWhiteSpace(name) ? "Untitled" : name.Trim();
+        NotifyStateChanged();
+    }
+
+    public void DeleteResume(string id)
+    {
+        var entry = Library.Resumes.FirstOrDefault(r => r.Id == id);
+        if (entry is null)
+        {
+            return;
+        }
+
+        Library.Resumes.Remove(entry);
+        if (Library.Resumes.Count == 0)
+        {
+            CreateResume("My Resume", fromSample: true);
+            return;
+        }
+
+        if (ActiveId == id)
+        {
+            SetActive(Library.Resumes[0].Id);
+        }
+        else
+        {
+            NotifyStateChanged();
+        }
+    }
+
     public void SetResume(ResumeDocument resume, bool recordHistory = true)
     {
         if (recordHistory)
@@ -62,6 +176,12 @@ public class ResumeState
         }
 
         Resume = resume;
+        var active = Library.GetActive();
+        if (active is not null)
+        {
+            active.Resume = resume;
+        }
+
         EditContext = CreateContext(resume);
         _committed = Serialize(resume);
         IsDirty = false;
@@ -72,6 +192,12 @@ public class ResumeState
     public void MarkDirty()
     {
         IsDirty = true;
+        var active = Library.GetActive();
+        if (active is not null)
+        {
+            active.UpdatedAt = DateTime.Now;
+        }
+
         NotifyStateChanged();
         _commitTimer.Stop();
         _commitTimer.Start();
@@ -113,6 +239,12 @@ public class ResumeState
     {
         var doc = Deserialize(serialized) ?? new ResumeDocument();
         Resume = doc;
+        var active = Library.GetActive();
+        if (active is not null)
+        {
+            active.Resume = doc;
+        }
+
         EditContext = CreateContext(doc);
         _committed = serialized;
         IsDirty = isDirty;
