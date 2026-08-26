@@ -5,16 +5,18 @@
 @inject IJSRuntime JS
 @implements IDisposable
 
-<div class="builder-toolbar d-flex gap-2 align-items-center px-3 py-2 border-bottom bg-white">
+<div class="builder-toolbar d-flex flex-wrap align-items-center gap-2 px-3 py-2 border-bottom bg-white">
     <strong>Resume Builder</strong>
     <span class="badge @(State.IsDirty ? "bg-warning text-dark" : "bg-success")">
         @(State.IsDirty ? "Unsaved" : "Saved")
     </span>
-    <div class="d-flex gap-2">
-        <button class="btn btn-sm btn-outline-secondary" @onclick="() => State.Undo()" disabled="@(!State.CanUndo)" title="Undo (Ctrl+Z)">Undo</button>
-        <button class="btn btn-sm btn-outline-secondary" @onclick="() => State.Redo()" disabled="@(!State.CanRedo)" title="Redo (Ctrl+Y)">Redo</button>
+
+    <div class="btn-group btn-group-sm">
+        <button class="btn btn-outline-secondary" @onclick="() => State.Undo()" disabled="@(!State.CanUndo)" title="Undo (Ctrl+Z)">Undo</button>
+        <button class="btn btn-outline-secondary" @onclick="() => State.Redo()" disabled="@(!State.CanRedo)" title="Redo (Ctrl+Y)">Redo</button>
     </div>
-    <div class="d-flex align-items-center gap-2">
+
+    <div class="d-flex align-items-center gap-1">
         <label class="form-label mb-0 small" for="themeSelect">Theme</label>
         <select id="themeSelect" class="form-select form-select-sm w-auto" value="@State.Resume.Theme" @onchange="OnThemeChange">
             <option value="default">Default</option>
@@ -22,14 +24,21 @@
             <option value="modern">Modern</option>
         </select>
     </div>
-    <div class="ms-auto d-flex gap-2">
-        <button class="btn btn-sm btn-outline-secondary" @onclick="Import">Import</button>
-        <button class="btn btn-sm btn-outline-secondary" @onclick="Export">Export</button>
-        <button class="btn btn-sm btn-primary" @onclick="Save">Save</button>
-        <button class="btn btn-sm btn-outline-secondary" @onclick="LoadSample">Sample</button>
-        <button class="btn btn-sm btn-outline-danger" @onclick="Clear">Clear</button>
-        <button class="btn btn-sm btn-outline-primary" @onclick="PreviewPdf">Preview PDF</button>
-        <button class="btn btn-sm btn-outline-primary" @onclick="Print">Download PDF</button>
+
+    <div class="ms-auto d-flex flex-wrap gap-2">
+        <div class="btn-group btn-group-sm">
+            <button class="btn btn-outline-secondary" @onclick="Import">Import</button>
+            <button class="btn btn-outline-secondary" @onclick="Export">Export</button>
+        </div>
+        <div class="btn-group btn-group-sm">
+            <button class="btn btn-outline-secondary" @onclick="Save">Save</button>
+            <button class="btn btn-outline-secondary" @onclick="LoadSample">Sample</button>
+            <button class="btn btn-outline-danger" @onclick="Clear">Clear</button>
+        </div>
+        <div class="btn-group btn-group-sm">
+            <button class="btn btn-outline-primary" @onclick="PreviewPdf">Preview</button>
+            <button class="btn btn-primary" @onclick="Print">Download PDF</button>
+        </div>
     </div>
 </div>
 
