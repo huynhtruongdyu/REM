@@ -1,0 +1,51 @@
+@inject ResumeState State
+
+<EditForm EditContext="State.EditContext">
+    <SectionListEditor Title="Projects"
+                       Items="State.Resume.Projects"
+                       Factory="() => new Project { Id = Guid.NewGuid() }"
+                       KeySelector="e => e.Id"
+                       Context="item">
+        <ItemFields>
+            <div class="row g-2">
+                <div class="col-md-6">
+                    <label class="form-label">Name</label>
+                    <InputText class="form-control" @bind-Value="item.Name" @bind:event="oninput" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">URL</label>
+                    <InputText class="form-control" @bind-Value="item.Url" @bind:event="oninput" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Start</label>
+                    <InputDate class="form-control" @bind-Value="item.StartDate" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">End</label>
+                    <InputDate class="form-control" @bind-Value="item.EndDate" />
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Description</label>
+                    <InputTextArea class="form-control" @bind-Value="item.Description" @bind:event="oninput" />
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Technologies (comma separated)</label>
+                    <input type="text" class="form-control" value="@TechText(item)" @oninput="e => UpdateTech(item, e.Value?.ToString())" />
+                </div>
+            </div>
+        </ItemFields>
+    </SectionListEditor>
+</EditForm>
+
+@code {
+    private static string TechText(Project item)
+        => item.Technologies is { Count: > 0 } ? string.Join(", ", item.Technologies) : "";
+
+    private void UpdateTech(Project item, string? value)
+    {
+        item.Technologies = (value ?? "")
+            .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .ToList();
+        State.MarkDirty();
+    }
+}

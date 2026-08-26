@@ -1,0 +1,160 @@
+@inject ResumeState State
+@implements IDisposable
+
+<div class="resume-preview p-4">
+    <header class="resume-header mb-3">
+        <h1 class="mb-0">@State.Resume.Personal.FullName</h1>
+        @if (!string.IsNullOrWhiteSpace(State.Resume.Personal.Title))
+        {
+            <div class="resume-title">@State.Resume.Personal.Title</div>
+        }
+        <div class="resume-contact mt-1">
+            @Join(new[] { State.Resume.Personal.Email, State.Resume.Personal.Phone, State.Resume.Personal.Location })
+            @if (!string.IsNullOrWhiteSpace(State.Resume.Personal.Website)) { <span>| @State.Resume.Personal.Website</span> }
+            @if (!string.IsNullOrWhiteSpace(State.Resume.Personal.LinkedIn)) { <span>| @State.Resume.Personal.LinkedIn</span> }
+            @if (!string.IsNullOrWhiteSpace(State.Resume.Personal.GitHub)) { <span>| @State.Resume.Personal.GitHub</span> }
+        </div>
+        @if (!string.IsNullOrWhiteSpace(State.Resume.Personal.Summary))
+        {
+            <p class="mt-2">@State.Resume.Personal.Summary</p>
+        }
+    </header>
+
+    @foreach (var section in State.Resume.SectionOrder)
+    {
+        switch (section)
+        {
+            case SectionDefinitions.Experience:
+                if (State.Resume.Experiences.Count > 0)
+                {
+                    <section class="resume-section mb-3">
+                        <h2>Experience</h2>
+                        @foreach (var x in State.Resume.Experiences)
+                        {
+                            <div class="resume-item">
+                                <div class="d-flex justify-content-between">
+                                    <strong>@x.Position @(string.IsNullOrWhiteSpace(x.Company) ? "" : $"· {x.Company}")</strong>
+                                    <span class="text-muted">@DateRange(x.StartDate, x.EndDate, x.IsCurrent)</span>
+                                </div>
+                                @if (!string.IsNullOrWhiteSpace(x.Description)) { <p class="mb-0">@x.Description</p> }
+                            </div>
+                        }
+                    </section>
+                }
+                break;
+            case SectionDefinitions.Education:
+                if (State.Resume.Educations.Count > 0)
+                {
+                    <section class="resume-section mb-3">
+                        <h2>Education</h2>
+                        @foreach (var x in State.Resume.Educations)
+                        {
+                            <div class="resume-item">
+                                <div class="d-flex justify-content-between">
+                                    <strong>@x.Degree @(string.IsNullOrWhiteSpace(x.FieldOfStudy) ? "" : $"in {x.FieldOfStudy}")</strong>
+                                    <span class="text-muted">@DateRange(x.StartDate, x.EndDate, false)</span>
+                                </div>
+                                <div>@x.Institution</div>
+                                @if (!string.IsNullOrWhiteSpace(x.Description)) { <p class="mb-0">@x.Description</p> }
+                            </div>
+                        }
+                    </section>
+                }
+                break;
+            case SectionDefinitions.Skills:
+                if (State.Resume.Skills.Count > 0)
+                {
+                    <section class="resume-section mb-3">
+                        <h2>Skills</h2>
+                        <ul class="list-inline">
+                            @foreach (var x in State.Resume.Skills)
+                            {
+                                <li class="list-inline-item border rounded px-2 py-1">@x.Name@(string.IsNullOrWhiteSpace(x.Proficiency) ? "" : $" ({x.Proficiency})")</li>
+                            }
+                        </ul>
+                    </section>
+                }
+                break;
+            case SectionDefinitions.Projects:
+                if (State.Resume.Projects.Count > 0)
+                {
+                    <section class="resume-section mb-3">
+                        <h2>Projects</h2>
+                        @foreach (var x in State.Resume.Projects)
+                        {
+                            <div class="resume-item">
+                                <div class="d-flex justify-content-between">
+                                    <strong>@x.Name</strong>
+                                    <span class="text-muted">@DateRange(x.StartDate, x.EndDate, false)</span>
+                                </div>
+                                @if (!string.IsNullOrWhiteSpace(x.Description)) { <p class="mb-0">@x.Description</p> }
+                                @if (x.Technologies.Count > 0) { <div class="text-muted small">@string.Join(", ", x.Technologies)</div> }
+                            </div>
+                        }
+                    </section>
+                }
+                break;
+            case SectionDefinitions.Certifications:
+                if (State.Resume.Certifications.Count > 0)
+                {
+                    <section class="resume-section mb-3">
+                        <h2>Certifications</h2>
+                        @foreach (var x in State.Resume.Certifications)
+                        {
+                            <div class="resume-item">
+                                <div class="d-flex justify-content-between">
+                                    <strong>@x.Name</strong>
+                                    <span class="text-muted">@x.IssueDate.Year@(x.ExpiryDate.HasValue ? $" – {x.ExpiryDate.Value.Year}" : "")</span>
+                                </div>
+                                <div>@x.Issuer</div>
+                            </div>
+                        }
+                    </section>
+                }
+                break;
+            case SectionDefinitions.Languages:
+                if (State.Resume.Languages.Count > 0)
+                {
+                    <section class="resume-section mb-3">
+                        <h2>Languages</h2>
+                        <ul class="list-inline">
+                            @foreach (var x in State.Resume.Languages)
+                            {
+                                <li class="list-inline-item border rounded px-2 py-1">@x.Name@(string.IsNullOrWhiteSpace(x.Proficiency) ? "" : $" ({x.Proficiency})")</li>
+                            }
+                        </ul>
+                    </section>
+                }
+                break;
+        }
+    }
+</div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        State.OnChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        State.OnChange -= StateHasChanged;
+    }
+
+    private static string Join(string[] values)
+    {
+        var parts = values.Where(v => !string.IsNullOrWhiteSpace(v));
+        return string.Join(" | ", parts);
+    }
+
+    private static string DateRange(DateOnly? start, DateOnly? end, bool current)
+    {
+        if (!start.HasValue && !end.HasValue)
+        {
+            return "";
+        }
+
+        var endText = current ? "Present" : (end.HasValue ? end.Value.ToString("MMM yyyy") : "");
+        return $"{(start.HasValue ? start.Value.ToString("MMM yyyy") : "")} – {endText}";
+    }
+}

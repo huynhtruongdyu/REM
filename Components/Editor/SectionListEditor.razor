@@ -1,0 +1,62 @@
+@typeparam TItem
+@inject ResumeState State
+
+<div class="card mb-3 editor-section">
+    <div class="card-header section-drag-handle">@Title</div>
+    <div class="card-body">
+        <SortableList Items="Items" KeySelector="KeySelector" OnReorder="Reorder" Context="item">
+            <ItemTemplate>
+                <div class="border rounded p-2 mb-2">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="drag-handle" title="Drag to reorder">&#10303;</span>
+                        <button class="btn btn-sm btn-outline-danger" @onclick="() => Remove(item)">Remove</button>
+                    </div>
+                    @ItemFields(item)
+                </div>
+            </ItemTemplate>
+        </SortableList>
+        <button class="btn btn-sm btn-primary" @onclick="Add">Add</button>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string Title { get; set; } = "";
+
+    [Parameter]
+    public IList<TItem> Items { get; set; } = [];
+
+    [Parameter]
+    public Func<TItem, object> KeySelector { get; set; } = default!;
+
+    [Parameter]
+    public Func<TItem> Factory { get; set; } = () => default!;
+
+    [Parameter]
+    public RenderFragment<TItem> ItemFields { get; set; } = default!;
+
+    private void Add()
+    {
+        Items.Add(Factory());
+        State.MarkDirty();
+    }
+
+    private void Remove(TItem item)
+    {
+        Items.Remove(item);
+        State.MarkDirty();
+    }
+
+    private void Reorder((int oldIndex, int newIndex) e)
+    {
+        if (e.oldIndex == e.newIndex)
+        {
+            return;
+        }
+
+        var item = Items[e.oldIndex];
+        Items.RemoveAt(e.oldIndex);
+        Items.Insert(e.newIndex, item);
+        State.MarkDirty();
+    }
+}

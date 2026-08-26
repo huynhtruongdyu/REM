@@ -15,4 +15,6 @@ public class ResumeDocument
     public List<Certification> Certifications { get; set; } = [];
 
     public List<Language> Languages { get; set; } = [];
+
+    public List<string> SectionOrder { get; set; } = ["Experience", "Education", "Skills", "Projects", "Certifications", "Languages"];
 }

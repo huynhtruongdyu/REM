@@ -1,0 +1,26 @@
+@inject ResumeState State
+
+<EditForm EditContext="State.EditContext">
+    <SectionListEditor Title="Skills"
+                       Items="State.Resume.Skills"
+                       Factory="() => new Skill { Id = Guid.NewGuid() }"
+                       KeySelector="e => e.Id"
+                       Context="item">
+        <ItemFields>
+            <div class="row g-2">
+                <div class="col-md-4">
+                    <label class="form-label">Name</label>
+                    <InputText class="form-control" @bind-Value="item.Name" @bind:event="oninput" />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Category</label>
+                    <InputText class="form-control" @bind-Value="item.Category" @bind:event="oninput" />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Proficiency</label>
+                    <InputText class="form-control" @bind-Value="item.Proficiency" @bind:event="oninput" />
+                </div>
+            </div>
+        </ItemFields>
+    </SectionListEditor>
+</EditForm>

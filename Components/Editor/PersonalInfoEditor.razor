@@ -1,0 +1,47 @@
+@inject ResumeState State
+
+<EditForm EditContext="State.EditContext">
+    <div class="card mb-3 editor-section">
+        <div class="card-header">Personal</div>
+        <div class="card-body">
+            <div class="row g-2">
+                <div class="col-md-6">
+                    <label class="form-label">Full name</label>
+                    <InputText class="form-control" @bind-Value="State.Resume.Personal.FullName" @bind:event="oninput" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Title</label>
+                    <InputText class="form-control" @bind-Value="State.Resume.Personal.Title" @bind:event="oninput" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Email</label>
+                    <InputText class="form-control" @bind-Value="State.Resume.Personal.Email" @bind:event="oninput" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Phone</label>
+                    <InputText class="form-control" @bind-Value="State.Resume.Personal.Phone" @bind:event="oninput" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Location</label>
+                    <InputText class="form-control" @bind-Value="State.Resume.Personal.Location" @bind:event="oninput" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Website</label>
+                    <InputText class="form-control" @bind-Value="State.Resume.Personal.Website" @bind:event="oninput" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">LinkedIn</label>
+                    <InputText class="form-control" @bind-Value="State.Resume.Personal.LinkedIn" @bind:event="oninput" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">GitHub</label>
+                    <InputText class="form-control" @bind-Value="State.Resume.Personal.GitHub" @bind:event="oninput" />
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Summary</label>
+                    <InputTextArea class="form-control" @bind-Value="State.Resume.Personal.Summary" @bind:event="oninput" />
+                </div>
+            </div>
+        </div>
+    </div>
+</EditForm>

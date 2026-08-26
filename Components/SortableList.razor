@@ -1,0 +1,67 @@
+@typeparam TItem
+@implements IDisposable
+<div @ref="containerRef" class="@Class">
+    @foreach (var item in Items)
+    {
+        <div class="sortable-item" @key="KeySelector(item)">
+            @ItemTemplate(item)
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public IEnumerable<TItem> Items { get; set; } = [];
+
+    [Parameter]
+    public RenderFragment<TItem> ItemTemplate { get; set; } = default!;
+
+    [Parameter]
+    public Func<TItem, object> KeySelector { get; set; } = default!;
+
+    [Parameter]
+    public EventCallback<(int oldIndex, int newIndex)> OnReorder { get; set; }
+
+    [Parameter]
+    public string Class { get; set; } = "";
+
+    [Parameter]
+    public string? Group { get; set; }
+
+    [Parameter]
+    public string Handle { get; set; } = ".drag-handle";
+
+    private ElementReference containerRef;
+    private DotNetObjectReference<SortableList<TItem>>? dotNetRef;
+
+    [Inject]
+    private IJSRuntime JS { get; set; } = default!;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            dotNetRef = DotNetObjectReference.Create(this);
+            await JS.InvokeVoidAsync("sortableInterop.init", containerRef, dotNetRef, Group, Handle);
+        }
+    }
+
+    [JSInvokable]
+    public async Task OnDrop(int oldIndex, int newIndex)
+    {
+        await OnReorder.InvokeAsync((oldIndex, newIndex));
+    }
+
+    public void Dispose()
+    {
+        try
+        {
+            JS.InvokeVoidAsync("sortableInterop.destroy", containerRef);
+        }
+        catch
+        {
+        }
+
+        dotNetRef?.Dispose();
+    }
+}

@@ -1,6 +1,83 @@
 @page "/builder"
-<h3>Builder</h3>
+@layout BuilderLayout
+@inject ResumeState State
+@inject StorageService Storage
+@inject IJSRuntime JS
+@implements IDisposable
+
+<div class="builder-toolbar d-flex gap-2 align-items-center px-3 py-2 border-bottom bg-white">
+    <strong>Resume Builder</strong>
+    <span class="badge @(State.IsDirty ? "bg-warning text-dark" : "bg-success")">
+        @(State.IsDirty ? "Unsaved" : "Saved")
+    </span>
+    <div class="ms-auto d-flex gap-2">
+        <button class="btn btn-sm btn-outline-secondary" @onclick="Import">Import</button>
+        <button class="btn btn-sm btn-outline-secondary" @onclick="Export">Export</button>
+        <button class="btn btn-sm btn-outline-primary" @onclick="Print">Print / PDF</button>
+    </div>
+</div>
+
+<div class="builder-split">
+    <div class="editor-pane p-3">
+        <ResumeEditor />
+    </div>
+    <div class="preview-pane bg-light p-3">
+        <ResumePreview />
+    </div>
+</div>
+
+<InputFile id="importFile" OnChange="OnFile" class="d-none" />
 
 @code {
+    private System.Timers.Timer? _saveTimer;
 
+    protected override void OnInitialized()
+    {
+        State.OnChange += OnStateChanged;
+        _saveTimer = new System.Timers.Timer(600) { AutoReset = false };
+        _saveTimer.Elapsed += async (_, _) => await InvokeAsync(async () => await Storage.SaveAsync(State.Resume));
+        _ = LoadAsync();
+    }
+
+    private async Task LoadAsync()
+    {
+        var doc = await Storage.LoadAsync();
+        if (doc is not null)
+        {
+            State.SetResume(doc);
+        }
+    }
+
+    private void OnStateChanged()
+    {
+        StateHasChanged();
+        _saveTimer?.Stop();
+        _saveTimer?.Start();
+    }
+
+    private async Task Export() => await Storage.ExportAsync(State.Resume);
+
+    private void Import() => JS.InvokeVoidAsync("clickEl", "importFile");
+
+    private async Task OnFile(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        if (file is null)
+        {
+            return;
+        }
+
+        using var reader = new StreamReader(file.OpenReadStream(10_000_000));
+        var json = await reader.ReadToEndAsync();
+        var doc = Storage.Import(json);
+        State.SetResume(doc);
+    }
+
+    private void Print() => JS.InvokeVoidAsync("window.print");
+
+    public void Dispose()
+    {
+        State.OnChange -= OnStateChanged;
+        _saveTimer?.Dispose();
+    }
 }

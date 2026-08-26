@@ -113,3 +113,126 @@ code {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
     text-align: start;
 }
+
+/* ===== Resume builder layout ===== */
+.builder-layout {
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.builder-toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.builder-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+.editor-pane {
+    overflow-y: auto;
+    border-right: 1px solid #dee2e6;
+}
+
+.preview-pane {
+    overflow-y: auto;
+}
+
+.drag-handle,
+.section-drag-handle {
+    cursor: grab;
+    user-select: none;
+    color: #6c757d;
+}
+
+    .drag-handle:active,
+    .section-drag-handle:active {
+        cursor: grabbing;
+    }
+
+.sortable-item {
+    list-style: none;
+}
+
+/* ===== Resume preview ===== */
+.resume-preview {
+    background: #fff;
+    box-shadow: 0 0 0 1px rgba(0,0,0,.1);
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.resume-preview h1 {
+    font-size: 1.8rem;
+}
+
+.resume-title {
+    font-weight: 500;
+    color: #1b6ec2;
+}
+
+.resume-contact {
+    font-size: .85rem;
+    color: #555;
+}
+
+.resume-section h2 {
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    border-bottom: 2px solid #1b6ec2;
+    padding-bottom: .2rem;
+    margin-bottom: .5rem;
+}
+
+.resume-item {
+    margin-bottom: .6rem;
+}
+
+@media (max-width: 991.98px) {
+    .builder-layout {
+        height: auto;
+        overflow: visible;
+    }
+
+    .builder-split {
+        grid-template-columns: 1fr;
+    }
+
+    .editor-pane,
+    .preview-pane {
+        max-height: none;
+    }
+}
+
+/* ===== Print: show only the preview ===== */
+@media print {
+    .sidebar,
+    .builder-toolbar,
+    .editor-pane {
+        display: none !important;
+    }
+
+    .builder-split {
+        display: block;
+    }
+
+    .preview-pane {
+        overflow: visible;
+        max-height: none;
+        background: #fff !important;
+        padding: 0 !important;
+    }
+
+    .resume-preview {
+        box-shadow: none;
+        max-width: 100%;
+    }
+}

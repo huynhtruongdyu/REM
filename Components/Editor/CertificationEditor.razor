@@ -1,0 +1,38 @@
+@inject ResumeState State
+
+<EditForm EditContext="State.EditContext">
+    <SectionListEditor Title="Certifications"
+                       Items="State.Resume.Certifications"
+                       Factory="() => new Certification { Id = Guid.NewGuid() }"
+                       KeySelector="e => e.Id"
+                       Context="item">
+        <ItemFields>
+            <div class="row g-2">
+                <div class="col-md-6">
+                    <label class="form-label">Name</label>
+                    <InputText class="form-control" @bind-Value="item.Name" @bind:event="oninput" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Issuer</label>
+                    <InputText class="form-control" @bind-Value="item.Issuer" @bind:event="oninput" />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Issued</label>
+                    <InputDate class="form-control" @bind-Value="item.IssueDate" />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Expiry</label>
+                    <InputDate class="form-control" @bind-Value="item.ExpiryDate" />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Credential ID</label>
+                    <InputText class="form-control" @bind-Value="item.CredentialId" @bind:event="oninput" />
+                </div>
+                <div class="col-12">
+                    <label class="form-label">URL</label>
+                    <InputText class="form-control" @bind-Value="item.Url" @bind:event="oninput" />
+                </div>
+            </div>
+        </ItemFields>
+    </SectionListEditor>
+</EditForm>

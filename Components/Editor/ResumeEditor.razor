@@ -1,0 +1,44 @@
+@inject ResumeState State
+
+<PersonalInfoEditor />
+
+<SortableList Items="State.Resume.SectionOrder" KeySelector="s => s" OnReorder="ReorderSections" Context="section" Handle=".section-drag-handle">
+    <ItemTemplate>
+        @switch (section)
+        {
+            case SectionDefinitions.Experience:
+                <ExperienceEditor />
+                break;
+            case SectionDefinitions.Education:
+                <EducationEditor />
+                break;
+            case SectionDefinitions.Skills:
+                <SkillEditor />
+                break;
+            case SectionDefinitions.Projects:
+                <ProjectEditor />
+                break;
+            case SectionDefinitions.Certifications:
+                <CertificationEditor />
+                break;
+            case SectionDefinitions.Languages:
+                <LanguageEditor />
+                break;
+        }
+    </ItemTemplate>
+</SortableList>
+
+@code {
+    private void ReorderSections((int oldIndex, int newIndex) e)
+    {
+        if (e.oldIndex == e.newIndex)
+        {
+            return;
+        }
+
+        var section = State.Resume.SectionOrder[e.oldIndex];
+        State.Resume.SectionOrder.RemoveAt(e.oldIndex);
+        State.Resume.SectionOrder.Insert(e.newIndex, section);
+        State.MarkDirty();
+    }
+}
