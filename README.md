@@ -107,7 +107,7 @@ A GitHub Actions workflow (`.github/workflows/deploy.yml`) builds and deploys th
 1. In the repo **Settings → Pages → Build and deployment → Source**, choose **GitHub Actions**.
 2. Push to `main` (or trigger the workflow manually).
 
-The workflow rewrites the `<base href>` to `/<repo>/` so it works as a **project page** (`https://<user>.github.io/<repo>/`). If you deploy to a **user/org page** or a custom domain, remove the `Set base path` step (the base must remain `/`).
+The workflow keeps the `<base href>` as `/` so the site is served from the domain root. A `wwwroot/CNAME` file sets the custom domain (currently `rem.duyhuynh.net`), so the site is published at `https://rem.duyhuynh.net/`. Note: because the base is `/`, the project‑page URL `https://<user>.github.io/<repo>/` is no longer used for this deployment.
 
 > Note: `BlazorEnableCompression` is disabled in the project so the precompressed `.br`/`.gz` assets (which GitHub Pages does not serve with the correct `Content-Encoding`) don't break loading.
 

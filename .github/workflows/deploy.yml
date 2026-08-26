@@ -29,13 +29,6 @@ jobs:
       - name: Publish
         run: dotnet publish REM.csproj -c Release -o release
 
-      # For a project page (https://<user>.github.io/<repo>/) the base href
-      # must include the repository name. For a user/org page remove this step.
-      - name: Set base path
-        run: |
-          REPO="${{ github.event.repository.name }}"
-          sed -i "s|<base href=\"/\" />|<base href=\"/$REPO/\" />|" release/wwwroot/index.html
-
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
