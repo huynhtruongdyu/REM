@@ -28,6 +28,7 @@
         <button class="btn btn-sm btn-primary" @onclick="Save">Save</button>
         <button class="btn btn-sm btn-outline-secondary" @onclick="LoadSample">Sample</button>
         <button class="btn btn-sm btn-outline-danger" @onclick="Clear">Clear</button>
+        <button class="btn btn-sm btn-outline-primary" @onclick="PreviewPdf">Preview PDF</button>
         <button class="btn btn-sm btn-outline-primary" @onclick="Print">Download PDF</button>
     </div>
 </div>
@@ -139,6 +140,8 @@
         var doc = Storage.Import(json);
         State.SetResume(doc);
     }
+
+    private void PreviewPdf() => JS.InvokeVoidAsync("previewPdf");
 
     private void Print()
     {
