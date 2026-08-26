@@ -46,3 +46,26 @@ window.clickEl = function (id) {
     var el = document.getElementById(id);
     if (el) el.click();
 };
+
+window.shortcuts = {
+    register: function (dotNetRef) {
+        window.__resumeShortcuts = function (e) {
+            if (!(e.ctrlKey || e.metaKey)) return;
+            var key = e.key.toLowerCase();
+            if (key === 'z' && !e.shiftKey) {
+                e.preventDefault();
+                dotNetRef.invokeMethodAsync('Undo');
+            } else if ((key === 'z' && e.shiftKey) || key === 'y') {
+                e.preventDefault();
+                dotNetRef.invokeMethodAsync('Redo');
+            }
+        };
+        window.addEventListener('keydown', window.__resumeShortcuts);
+    },
+    unregister: function () {
+        if (window.__resumeShortcuts) {
+            window.removeEventListener('keydown', window.__resumeShortcuts);
+            window.__resumeShortcuts = null;
+        }
+    }
+};

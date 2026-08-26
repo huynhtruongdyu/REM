@@ -10,10 +10,15 @@
     <span class="badge @(State.IsDirty ? "bg-warning text-dark" : "bg-success")">
         @(State.IsDirty ? "Unsaved" : "Saved")
     </span>
+    <div class="d-flex gap-2">
+        <button class="btn btn-sm btn-outline-secondary" @onclick="() => State.Undo()" disabled="@(!State.CanUndo)" title="Undo (Ctrl+Z)">Undo</button>
+        <button class="btn btn-sm btn-outline-secondary" @onclick="() => State.Redo()" disabled="@(!State.CanRedo)" title="Redo (Ctrl+Y)">Redo</button>
+    </div>
     <div class="ms-auto d-flex gap-2">
         <button class="btn btn-sm btn-outline-secondary" @onclick="Import">Import</button>
         <button class="btn btn-sm btn-outline-secondary" @onclick="Export">Export</button>
         <button class="btn btn-sm btn-primary" @onclick="Save">Save</button>
+        <button class="btn btn-sm btn-outline-secondary" @onclick="LoadSample">Sample</button>
         <button class="btn btn-sm btn-outline-danger" @onclick="Clear">Clear</button>
         <button class="btn btn-sm btn-outline-primary" @onclick="Print">Print / PDF</button>
     </div>
@@ -21,10 +26,10 @@
 
 <div class="builder-split">
     <div class="editor-pane p-3">
-        <ResumeEditor />
+        <ResumeEditor @key="State.Resume" />
     </div>
     <div class="preview-pane bg-light p-3">
-        <ResumePreview />
+        <ResumePreview @key="State.Resume" />
     </div>
 </div>
 
@@ -32,22 +37,36 @@
 
 @code {
     private System.Timers.Timer? _saveTimer;
+    private DotNetObjectReference<Index>? _dotNetRef;
 
     protected override void OnInitialized()
     {
         State.OnChange += OnStateChanged;
+        State.OnHistoryChange += OnHistoryChanged;
         _saveTimer = new System.Timers.Timer(600) { AutoReset = false };
         _saveTimer.Elapsed += async (_, _) => await InvokeAsync(async () => await Storage.SaveAsync(State.Resume));
         _ = LoadAsync();
     }
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _dotNetRef = DotNetObjectReference.Create(this);
+            await JS.InvokeVoidAsync("shortcuts.register", _dotNetRef);
+        }
+    }
+
     private async Task LoadAsync()
     {
         var doc = await Storage.LoadAsync();
-        if (doc is not null)
+        if (doc is null)
         {
-            State.SetResume(doc);
+            doc = SampleResume.Create();
+            await Storage.SaveAsync(doc);
         }
+
+        State.SetResume(doc, recordHistory: false);
     }
 
     private void OnStateChanged()
@@ -57,12 +76,26 @@
         _saveTimer?.Start();
     }
 
+    private void OnHistoryChanged() => StateHasChanged();
+
+    [JSInvokable]
+    public void Undo() => State.Undo();
+
+    [JSInvokable]
+    public void Redo() => State.Redo();
+
     private async Task Export() => await Storage.ExportAsync(State.Resume);
 
     private async Task Save()
     {
         await Storage.SaveAsync(State.Resume);
         State.MarkSaved();
+    }
+
+    private async Task LoadSample()
+    {
+        State.SetResume(SampleResume.Create());
+        await Storage.SaveAsync(State.Resume);
     }
 
     private async Task Clear()
@@ -98,6 +131,12 @@
     public void Dispose()
     {
         State.OnChange -= OnStateChanged;
+        State.OnHistoryChange -= OnHistoryChanged;
         _saveTimer?.Dispose();
+        if (_dotNetRef is not null)
+        {
+            JS.InvokeVoidAsync("shortcuts.unregister");
+            _dotNetRef.Dispose();
+        }
     }
 }
