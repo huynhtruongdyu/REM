@@ -58,7 +58,7 @@
             @if (_exportMenuOpen)
             {
                 <ul class="dropdown-menu dropdown-menu-end show">
-                    <li><button class="dropdown-item" @onclick="() => { Print(); CloseExportMenu(); }">PDF (text)</button>
+                    <li><button class="dropdown-item" @onclick="async () => { await DownloadTextPdf(); CloseExportMenu(); }">PDF (text)</button>
                     </li>
                     <li><button class="dropdown-item" @onclick="() => { ImagePdf(); CloseExportMenu(); }">Image PDF</button>
                     </li>
@@ -250,11 +250,12 @@
 
     private void PreviewPdf() => JS.InvokeVoidAsync("previewPdf");
 
-    private void Print()
+    private async Task DownloadTextPdf()
     {
+        var json = PdfService.BuildDocDefinitionJson(State.Resume);
         var name = State.Resume.Personal.FullName;
         var filename = string.IsNullOrWhiteSpace(name) ? "resume.pdf" : $"{name}-Resume.pdf";
-        JS.InvokeVoidAsync("exportPdf", filename);
+        await JS.InvokeVoidAsync("exportTextPdf", filename, json);
     }
 
     private void ImagePdf()

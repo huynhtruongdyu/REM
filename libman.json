@@ -19,6 +19,15 @@
       "files": [
         "html2pdf.bundle.min.js"
       ]
+    },
+    {
+      "library": "pdfmake@0.3.3",
+      "destination": "wwwroot\\lib\\pdfmake",
+      "provider": "jsdelivr",
+      "files": [
+        "build/pdfmake.min.js",
+        "build/vfs_fonts.js"
+      ]
     }
   ]
 }

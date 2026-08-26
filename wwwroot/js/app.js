@@ -48,12 +48,32 @@ window.clickEl = function (id) {
 };
 
 window.exportPdf = function (filename) {
-    window.print();
+    printWithoutTitle();
 };
 
 window.previewPdf = function () {
-    window.print();
+    printWithoutTitle();
 };
+
+window.exportTextPdf = function (filename, json) {
+    if (typeof pdfMake === 'undefined') {
+        printWithoutTitle();
+        return;
+    }
+
+    pdfMake.createPdf(JSON.parse(json)).download(filename || 'resume.pdf');
+};
+
+function printWithoutTitle() {
+    var original = document.title;
+    document.title = '';
+    var restore = function () {
+        document.title = original;
+        window.removeEventListener('afterprint', restore);
+    };
+    window.addEventListener('afterprint', restore);
+    window.print();
+}
 
 window.exportImagePdf = function (filename) {
     var el = document.querySelector('.resume-preview');
