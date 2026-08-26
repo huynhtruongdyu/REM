@@ -97,7 +97,8 @@ public static class SampleResume
                 new Language { Id = Guid.NewGuid(), Name = "English", Proficiency = "Native" },
                 new Language { Id = Guid.NewGuid(), Name = "Spanish", Proficiency = "Conversational" }
             ],
-            SectionOrder = ["Experience", "Education", "Skills", "Projects", "Certifications", "Languages"]
+            SectionOrder = ["Experience", "Education", "Skills", "Projects", "Certifications", "Languages"],
+            Theme = "default"
         };
     }
 }

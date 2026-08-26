@@ -17,4 +17,6 @@ public class ResumeDocument
     public List<Language> Languages { get; set; } = [];
 
     public List<string> SectionOrder { get; set; } = ["Experience", "Education", "Skills", "Projects", "Certifications", "Languages"];
+
+    public string Theme { get; set; } = "default";
 }

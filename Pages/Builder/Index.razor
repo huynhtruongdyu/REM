@@ -14,6 +14,14 @@
         <button class="btn btn-sm btn-outline-secondary" @onclick="() => State.Undo()" disabled="@(!State.CanUndo)" title="Undo (Ctrl+Z)">Undo</button>
         <button class="btn btn-sm btn-outline-secondary" @onclick="() => State.Redo()" disabled="@(!State.CanRedo)" title="Redo (Ctrl+Y)">Redo</button>
     </div>
+    <div class="d-flex align-items-center gap-2">
+        <label class="form-label mb-0 small" for="themeSelect">Theme</label>
+        <select id="themeSelect" class="form-select form-select-sm w-auto" value="@State.Resume.Theme" @onchange="OnThemeChange">
+            <option value="default">Default</option>
+            <option value="minimal">Minimalism</option>
+            <option value="modern">Modern</option>
+        </select>
+    </div>
     <div class="ms-auto d-flex gap-2">
         <button class="btn btn-sm btn-outline-secondary" @onclick="Import">Import</button>
         <button class="btn btn-sm btn-outline-secondary" @onclick="Export">Export</button>
@@ -77,6 +85,12 @@
     }
 
     private void OnHistoryChanged() => StateHasChanged();
+
+    private void OnThemeChange(ChangeEventArgs e)
+    {
+        State.Resume.Theme = e.Value?.ToString() ?? "default";
+        State.MarkDirty();
+    }
 
     [JSInvokable]
     public void Undo() => State.Undo();

@@ -1,7 +1,7 @@
 @inject ResumeState State
 @implements IDisposable
 
-<div class="resume-preview">
+<div class="resume-preview theme-@(State.Resume.Theme ?? "default")">
     @if (HasPersonal())
     {
         <header class="rp-header">
@@ -31,7 +31,10 @@
                         {
                             <div class="rp-entry">
                                 <div class="rp-entry-head">
-                                    <span class="rp-strong">@x.Position@(string.IsNullOrWhiteSpace(x.Company) ? "" : $", {x.Company}")</span>
+                                    <div>
+                                        <span class="rp-strong">@x.Position</span>
+                                        @if (!string.IsNullOrWhiteSpace(x.Company)) { <div class="rp-org">@x.Company</div> }
+                                    </div>
                                     <span class="rp-dates">@DateRange(x.StartDate, x.EndDate, x.IsCurrent)</span>
                                 </div>
                                 @if (!string.IsNullOrWhiteSpace(x.Description)) { <p class="rp-desc">@x.Description</p> }
@@ -49,10 +52,12 @@
                         {
                             <div class="rp-entry">
                                 <div class="rp-entry-head">
-                                    <span class="rp-strong">@x.Degree@(string.IsNullOrWhiteSpace(x.FieldOfStudy) ? "" : $", {x.FieldOfStudy}")</span>
+                                    <div>
+                                        <span class="rp-strong">@x.Degree@(string.IsNullOrWhiteSpace(x.FieldOfStudy) ? "" : $", {x.FieldOfStudy}")</span>
+                                        @if (!string.IsNullOrWhiteSpace(x.Institution)) { <div class="rp-org">@x.Institution</div> }
+                                    </div>
                                     <span class="rp-dates">@DateRange(x.StartDate, x.EndDate, false)</span>
                                 </div>
-                                @if (!string.IsNullOrWhiteSpace(x.Institution)) { <div class="rp-org">@x.Institution</div> }
                                 @if (!string.IsNullOrWhiteSpace(x.Gpa)) { <div class="rp-muted">GPA: @x.Gpa</div> }
                                 @if (!string.IsNullOrWhiteSpace(x.Description)) { <p class="rp-desc">@x.Description</p> }
                             </div>
@@ -82,10 +87,12 @@
                         {
                             <div class="rp-entry">
                                 <div class="rp-entry-head">
-                                    <span class="rp-strong">@x.Name</span>
+                                    <div>
+                                        <span class="rp-strong">@x.Name</span>
+                                        @if (!string.IsNullOrWhiteSpace(x.Url)) { <div class="rp-org">@x.Url</div> }
+                                    </div>
                                     <span class="rp-dates">@DateRange(x.StartDate, x.EndDate, false)</span>
                                 </div>
-                                @if (!string.IsNullOrWhiteSpace(x.Url)) { <div class="rp-muted">@x.Url</div> }
                                 @if (!string.IsNullOrWhiteSpace(x.Description)) { <p class="rp-desc">@x.Description</p> }
                                 @if (x.Technologies.Count > 0) { <div class="rp-muted">@string.Join(", ", x.Technologies)</div> }
                             </div>

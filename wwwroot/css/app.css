@@ -164,78 +164,174 @@ code {
 /* ===== Resume preview (ATS-friendly, single column) ===== */
 .resume-preview {
     background: #fff;
-    max-width: 800px;
+    max-width: 820px;
     margin: 0 auto;
-    padding: 2rem;
+    padding: 2.25rem 2.5rem;
     font-size: 11pt;
-    line-height: 1.4;
-    color: #111;
+    line-height: 1.45;
+    color: #1a1a1a;
 }
 
 .resume-preview h1 {
-    font-size: 1.6rem;
+    font-size: 1.9rem;
+    font-weight: 800;
+    letter-spacing: -.01em;
     margin: 0 0 .15rem;
 }
 
 .rp-title {
+    font-size: 1.05rem;
     font-weight: 600;
-    margin-bottom: .25rem;
+    margin-bottom: .4rem;
 }
 
 .rp-contact {
     font-size: .85rem;
-    color: #333;
-    margin-bottom: .5rem;
+    color: #444;
+    margin-bottom: .6rem;
 }
 
 .rp-summary {
-    margin: 0 0 .25rem;
+    margin: 0 0 .4rem;
+    color: #333;
 }
 
 .rp-section {
-    margin-top: 1rem;
+    margin-top: 1.4rem;
 }
 
 .rp-section h2 {
     font-size: 1rem;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: .04em;
-    border-bottom: 1px solid #999;
-    padding-bottom: .15rem;
-    margin-bottom: .4rem;
+    letter-spacing: .08em;
+    padding-bottom: .25rem;
+    margin-bottom: .6rem;
 }
 
 .rp-entry {
-    margin-bottom: .5rem;
+    margin-bottom: .85rem;
+}
+
+.rp-entry:last-child {
+    margin-bottom: 0;
 }
 
 .rp-entry-head {
     display: flex;
     justify-content: space-between;
+    align-items: baseline;
     gap: 1rem;
 }
 
 .rp-strong {
+    font-size: 1.02rem;
     font-weight: 700;
 }
 
 .rp-org {
     font-style: italic;
+    color: #444;
 }
 
 .rp-dates,
 .rp-muted {
-    color: #555;
-    font-size: .85rem;
+    color: #666;
+    font-size: .82rem;
     white-space: nowrap;
+    font-weight: 500;
 }
 
 .rp-desc {
-    margin: .15rem 0 0;
+    margin: .2rem 0 0;
+    color: #333;
 }
 
 .rp-line {
     margin: 0;
+    color: #333;
+}
+
+/* ---- Theme: Default (blue accent) ---- */
+.theme-default h1,
+.theme-default .rp-strong {
+    color: #10243f;
+}
+
+.theme-default .rp-title {
+    color: #1b6ec2;
+}
+
+.theme-default .rp-section {
+    padding-left: .75rem;
+    border-left: 3px solid #1b6ec2;
+}
+
+.theme-default .rp-section h2 {
+    color: #1b6ec2;
+    border-bottom: 2px solid #cfe1f5;
+}
+
+/* ---- Theme: Minimalism (black/white, airy) ---- */
+.theme-minimal h1 {
+    color: #000;
+    font-weight: 700;
+}
+
+.theme-minimal .rp-strong {
+    color: #111;
+}
+
+.theme-minimal .rp-title {
+    color: #333;
+}
+
+.theme-minimal .rp-section {
+    margin-top: 1.8rem;
+    padding-left: 0;
+}
+
+.theme-minimal .rp-section h2 {
+    color: #111;
+    border-bottom: 1px solid #ccc;
+    letter-spacing: .12em;
+    font-weight: 600;
+}
+
+.theme-minimal .rp-entry {
+    margin-bottom: 1rem;
+}
+
+/* ---- Theme: Modern (indigo accent, tinted heading bar) ---- */
+.theme-modern h1 {
+    color: #0f172a;
+}
+
+.theme-modern .rp-title {
+    color: #2563eb;
+}
+
+.theme-modern .rp-strong {
+    color: #0f172a;
+}
+
+.theme-modern .rp-section {
+    padding-left: 1rem;
+    border-left: 4px solid #2563eb;
+}
+
+.theme-modern .rp-section h2 {
+    color: #fff;
+    background: #2563eb;
+    border-bottom: none;
+    letter-spacing: .06em;
+    padding: .3rem .6rem;
+    border-radius: 4px;
+    margin-bottom: .6rem;
+}
+
+.theme-modern .rp-org {
+    color: #475569;
 }
 
 @media (max-width: 991.98px) {
