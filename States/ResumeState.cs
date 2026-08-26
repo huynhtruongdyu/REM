@@ -167,6 +167,31 @@ public class ResumeState
         }
     }
 
+    public void ImportLibrary(ResumeLibrary imported)
+    {
+        var added = new List<string>();
+        foreach (var entry in imported.Resumes)
+        {
+            var clone = JsonSerializer.Deserialize<ResumeDocument>(JsonSerializer.Serialize(entry.Resume, JsonOptions))!;
+            var newEntry = new ResumeEntry { Name = entry.Name, Resume = clone, UpdatedAt = DateTime.Now };
+            Library.Resumes.Add(newEntry);
+            added.Add(newEntry.Id);
+        }
+
+        if (added.Count > 0)
+        {
+            ActiveId = added[0];
+            Library.ActiveId = added[0];
+            SetResume(Library.GetActive()!.Resume, recordHistory: false);
+            _undo.Clear();
+            _redo.Clear();
+        }
+        else
+        {
+            NotifyStateChanged();
+        }
+    }
+
     public void SetResume(ResumeDocument resume, bool recordHistory = true)
     {
         if (recordHistory)

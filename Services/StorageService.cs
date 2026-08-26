@@ -47,9 +47,33 @@ public class StorageService
     public async Task ExportAsync(ResumeDocument doc)
         => await _js.InvokeVoidAsync("storage.downloadFile", "resume.json", JsonSerializer.Serialize(doc, Options));
 
-    public ResumeDocument Import(string json)
+    public async Task ExportLibraryAsync(ResumeLibrary library)
+        => await _js.InvokeVoidAsync("storage.downloadFile", "rem-library.json", JsonSerializer.Serialize(library, Options));
+
+    public ResumeDocument ImportResume(string json)
         => JsonSerializer.Deserialize<ResumeDocument>(json)
         ?? throw new InvalidOperationException("Invalid resume file.");
+
+    public ResumeLibrary? TryImportLibrary(string json)
+    {
+        try
+        {
+            using var doc = JsonDocument.Parse(json);
+            if (doc.RootElement.TryGetProperty("Resumes", out var res) && res.ValueKind == JsonValueKind.Array)
+            {
+                var lib = JsonSerializer.Deserialize<ResumeLibrary>(json);
+                if (lib is not null && lib.Resumes.Count > 0)
+                {
+                    return lib;
+                }
+            }
+        }
+        catch (JsonException)
+        {
+        }
+
+        return null;
+    }
 
     public static string ToMarkdown(ResumeDocument doc)
     {

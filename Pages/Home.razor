@@ -45,11 +45,7 @@
     </div>
 
     <div class="ms-auto d-flex flex-wrap gap-2">
-        <div class="btn-group btn-group-sm">
-            <button class="btn btn-outline-success" @onclick="Save">Save</button>
-            <button class="btn btn-outline-secondary" @onclick="LoadSample">Load Sample</button>
-            <button class="btn btn-outline-danger" @onclick="Clear">Clear</button>
-        </div>
+
         <div class="btn-group btn-group-sm">
             <button class="btn btn-primary dropdown-toggle" type="button" @onclick="ToggleExportMenu"
                     aria-expanded="@_exportMenuOpen">
@@ -58,22 +54,40 @@
             @if (_exportMenuOpen)
             {
                 <ul class="dropdown-menu dropdown-menu-end show">
-                    <li><button class="dropdown-item" @onclick="async () => { await DownloadTextPdf(); CloseExportMenu(); }">PDF (text)</button>
+                    <li><button class="dropdown-item"
+                                    @onclick="async () => { await DownloadTextPdf(); CloseExportMenu(); }">PDF (text)</button>
                     </li>
                     <li><button class="dropdown-item" @onclick="() => { ImagePdf(); CloseExportMenu(); }">Image PDF</button>
                     </li>
                     <li><button class="dropdown-item"
                                     @onclick="async () => { await DownloadMarkdown(); CloseExportMenu(); }">Markdown</button></li>
-                    </ul>
-                }
-            </div>
-            @if (_exportMenuOpen)
-            {
-                <div class="dropdown-backdrop" @onclick="CloseExportMenu"></div>
+                </ul>
             }
+            <button class="btn btn-outline-secondary" @onclick="Import">Import</button>
+            <button class="btn btn-outline-secondary dropdown-toggle" type="button" @onclick="ToggleExportJsonMenu"
+                    aria-expanded="@_exportJsonMenuOpen">
+                Export
+            </button>
+            @if (_exportJsonMenuOpen)
+            {
+                <ul class="dropdown-menu dropdown-menu-end show">
+                    <li><button class="dropdown-item"
+                                    @onclick="async () => { await ExportResume(); CloseExportJsonMenu(); }">Resume (JSON)</button>
+                    </li>
+                    <li><button class="dropdown-item"
+                                    @onclick="async () => { await ExportLibrary(); CloseExportJsonMenu(); }">Library (JSON)</button>
+                    </li>
+                </ul>
+            }
+        </div>
+        @if (_exportMenuOpen || _exportJsonMenuOpen)
+        {
+            <div class="dropdown-backdrop" @onclick="() => { CloseExportMenu(); CloseExportJsonMenu(); }"></div>
+        }
             <div class="btn-group btn-group-sm">
-                <button class="btn btn-outline-secondary" @onclick="Import">Import</button>
-                <button class="btn btn-outline-secondary" @onclick="Export">Export</button>
+                <button class="btn btn-outline-success" @onclick="Save">Save</button>
+                <button class="btn btn-outline-secondary" @onclick="LoadSample">Load Sample</button>
+                <button class="btn btn-outline-danger" @onclick="Clear">Clear</button>
             </div>
         </div>
     </div>
@@ -206,7 +220,9 @@
     [JSInvokable]
     public void Redo() => State.Redo();
 
-    private async Task Export() => await Storage.ExportAsync(State.Resume);
+    private async Task ExportResume() => await Storage.ExportAsync(State.Resume);
+
+    private async Task ExportLibrary() => await Storage.ExportLibraryAsync(State.Library);
 
     private async Task Save()
     {
@@ -244,8 +260,18 @@
 
         using var reader = new StreamReader(file.OpenReadStream(10_000_000));
         var json = await reader.ReadToEndAsync();
-        var doc = Storage.Import(json);
+
+        var library = Storage.TryImportLibrary(json);
+        if (library is not null)
+        {
+            State.ImportLibrary(library);
+            await Storage.SaveLibraryAsync(State.Library);
+            return;
+        }
+
+        var doc = Storage.ImportResume(json);
         State.SetResume(doc);
+        await Storage.SaveLibraryAsync(State.Library);
     }
 
     private void PreviewPdf() => JS.InvokeVoidAsync("previewPdf");
@@ -305,6 +331,12 @@
     private void ToggleExportMenu() => _exportMenuOpen = !_exportMenuOpen;
 
     private void CloseExportMenu() => _exportMenuOpen = false;
+
+    private bool _exportJsonMenuOpen;
+
+    private void ToggleExportJsonMenu() => _exportJsonMenuOpen = !_exportJsonMenuOpen;
+
+    private void CloseExportJsonMenu() => _exportJsonMenuOpen = false;
 
     private void StartRename(MouseEventArgs _, string id)
     {
