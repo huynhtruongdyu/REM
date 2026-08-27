@@ -1,5 +1,6 @@
 html, body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+    min-width: 400px;
 }
 
 h1:focus {
@@ -398,6 +399,7 @@ code {
     background: var(--bgColor-muted);
     font-size: .8rem;
     color: var(--fgColor-muted);
+    text-align: center;
 }
 
 .sidebar-footer a {
@@ -824,6 +826,10 @@ code {
     }
 
     .col-md-3, .col-md-4, .col-md-6 { flex: 0 0 100%; max-width: 100%; }
+
+    .sidebar-footer {
+        display: none;
+    }
 }
 
 /* ===== Print: show only the preview ===== */

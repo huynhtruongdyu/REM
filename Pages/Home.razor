@@ -7,19 +7,8 @@
 @implements IDisposable
 
 <div class="builder-toolbar d-flex flex-wrap flex-items-center gap-2 px-3 py-2 border-bottom color-bg-default">
-    <strong>REM</strong>
-    <span class="Label @(State.IsDirty ? "Label--warning" : "Label--success")">
-        @(State.IsDirty ? "Unsaved" : "Saved")
-    </span>
-
-    <div class="btn-group">
-        <button class="btn btn-sm" @onclick="() => State.Undo()" disabled="@(!State.CanUndo)"
-                title="Undo (Ctrl+Z)">Undo</button>
-        <button class="btn btn-sm" @onclick="() => State.Redo()" disabled="@(!State.CanRedo)"
-                title="Redo (Ctrl+Y)">Redo</button>
-    </div>
-
-    <div class="d-flex flex-items-center gap-2">
+    <strong class="pr-3 border-right">REM</strong>
+    <div class="d-flex flex-items-center gap-2 pl-1">
         <label class="form-label mb-0 small" for="themeSelect">Theme</label>
         <select id="themeSelect" class="form-select form-select-sm w-auto" value="@State.Resume.Theme"
                 @onchange="OnThemeChange">
@@ -44,7 +33,17 @@
         </select>
     </div>
 
-    <div class="ms-auto d-flex flex-wrap gap-2 justify-content-end">
+    <div class="ms-auto d-flex flex-wrap align-items-center gap-2 justify-content-end">
+        <span class="Label @(State.IsDirty ? "Label--warning" : "Label--success")">
+            @(State.IsDirty ? "Unsaved" : "Saved")
+        </span>
+
+        <div class="btn-group">
+            <button class="btn btn-sm" @onclick="() => State.Undo()" disabled="@(!State.CanUndo)"
+                    title="Undo (Ctrl+Z)">Undo</button>
+            <button class="btn btn-sm" @onclick="() => State.Redo()" disabled="@(!State.CanRedo)"
+                    title="Redo (Ctrl+Y)">Redo</button>
+        </div>
 
         <button class="btn btn-sm" @onclick="Import">Import</button>
 
@@ -87,16 +86,16 @@
                     </li>
                     <li><button class="dropdown-item"
                                     @onclick="async () => { await DownloadMarkdown(); CloseExportMenu(); }">Markdown</button></li>
-                </ul>
+                    </ul>
+                }
+            </div>
+
+            @if (_exportMenuOpen || _exportJsonMenuOpen)
+            {
+                <div class="dropdown-backdrop" @onclick="() => { CloseExportMenu(); CloseExportJsonMenu(); }"></div>
             }
         </div>
-
-        @if (_exportMenuOpen || _exportJsonMenuOpen)
-        {
-            <div class="dropdown-backdrop" @onclick="() => { CloseExportMenu(); CloseExportJsonMenu(); }"></div>
-        }
     </div>
-</div>
 
     <div class="builder-body d-flex">
         <aside class="resume-sidebar">
@@ -106,9 +105,9 @@
                     <span class="resume-count">@State.Resumes.Count()</span>
                 </div>
                 <div class="d-flex flex-items-center gap-2">
-                    <a href="/about" class="btn btn-sm">About</a>
                     <div class="dropdown">
-                        <button class="btn btn-sm btn-primary" title="New resume" @onclick="ToggleNewMenu" aria-expanded="@_newMenuOpen">+ New<span class="dropdown-caret"></span></button>
+                        <button class="btn btn-sm btn-primary" title="New resume" @onclick="ToggleNewMenu"
+                                aria-expanded="@_newMenuOpen">+ New<span class="dropdown-caret"></span></button>
                         @if (_newMenuOpen)
                         {
                             <ul class="dropdown-menu show dropdown-menu-end">
@@ -149,8 +148,8 @@
                                 <span class="hover-actions">
                                     <button class="btn btn-sm btn-icon" title="Duplicate" @onclick="e => Duplicate(e, r.Id)"
                                             @onclick:stopPropagation>⧉</button>
-                                    <button class="btn btn-sm btn-icon color-fg-danger" title="Delete" @onclick="e => Delete(e, r.Id)"
-                                            @onclick:stopPropagation>🗑</button>
+                                    <button class="btn btn-sm btn-icon color-fg-danger" title="Delete"
+                                            @onclick="e => Delete(e, r.Id)" @onclick:stopPropagation>🗑</button>
                                 </span>
                             </div>
                         }
