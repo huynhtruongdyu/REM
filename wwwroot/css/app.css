@@ -790,6 +790,110 @@ code {
     color: var(--accent-ink);
 }
 
+/* ---- Theme: Professional (bold name rule) ---- */
+.theme-professional h1 {
+    color: var(--accent-ink);
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: .3rem;
+    font-weight: 700;
+}
+
+.theme-professional .rp-title {
+    color: var(--accent);
+}
+
+.theme-professional .rp-strong {
+    color: var(--accent-ink);
+}
+
+.theme-professional .rp-section h2 {
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: .2rem;
+}
+
+/* ---- Theme: Creative (soft accent panel) ---- */
+.theme-creative h1 {
+    color: var(--accent-ink);
+    font-weight: 800;
+    letter-spacing: -.01em;
+}
+
+.theme-creative .rp-title {
+    color: var(--accent);
+    font-style: italic;
+}
+
+.theme-creative .rp-strong {
+    color: var(--accent-ink);
+}
+
+.theme-creative .rp-section {
+    padding: .75rem;
+    border-left: 4px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    background: color-mix(in srgb, var(--accent-soft) 55%, transparent);
+}
+
+.theme-creative .rp-section h2 {
+    color: var(--accent);
+}
+
+/* ---- Theme: Technical (monospace) ---- */
+.theme-technical {
+    font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+
+.theme-technical h1 {
+    color: var(--accent-ink);
+    letter-spacing: -.01em;
+}
+
+.theme-technical .rp-title {
+    color: var(--accent);
+}
+
+.theme-technical .rp-strong {
+    color: var(--accent-ink);
+}
+
+.theme-technical .rp-section h2 {
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    border-bottom: 1px dashed var(--accent);
+    font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+
+/* ---- Theme: Bold (heavy type) ---- */
+.theme-bold h1 {
+    color: var(--accent-ink);
+    font-size: 2.2rem;
+    font-weight: 900;
+    letter-spacing: -.02em;
+}
+
+.theme-bold .rp-title {
+    color: var(--accent);
+}
+
+.theme-bold .rp-strong {
+    color: var(--accent-ink);
+}
+
+.theme-bold .rp-section {
+    border-left: 6px solid var(--accent);
+    padding-left: 1rem;
+}
+
+.theme-bold .rp-section h2 {
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: .1em;
+}
+
 /* ---- Color schemes (set accent variables) ---- */
 .scheme-blue    { --accent: #1b6ec2; --accent-soft: #cfe1f5; --accent-ink: #10243f; }
 .scheme-indigo  { --accent: #4f46e5; --accent-soft: #e0e7ff; --accent-ink: #1e1b4b; }
@@ -799,6 +903,12 @@ code {
 .scheme-violet  { --accent: #7c3aed; --accent-soft: #ede9fe; --accent-ink: #2e1065; }
 .scheme-teal    { --accent: #0d9488; --accent-soft: #ccfbf1; --accent-ink: #042f2e; }
 .scheme-slate   { --accent: #475569; --accent-soft: #e2e8f0; --accent-ink: #0f172a; }
+.scheme-red      { --accent: #dc2626; --accent-soft: #fee2e2; --accent-ink: #7f1d1d; }
+.scheme-orange   { --accent: #ea580c; --accent-soft: #ffedd5; --accent-ink: #7c2d12; }
+.scheme-pink     { --accent: #db2777; --accent-soft: #fce7f3; --accent-ink: #831843; }
+.scheme-cyan     { --accent: #0891b2; --accent-soft: #cffafe; --accent-ink: #164e63; }
+.scheme-lime     { --accent: #65a30d; --accent-soft: #ecfccb; --accent-ink: #365314; }
+.scheme-purple   { --accent: #9333ea; --accent-soft: #f3e8ff; --accent-ink: #4a1d96; }
 
 @media (max-width: 991.98px) {
     .builder-layout {

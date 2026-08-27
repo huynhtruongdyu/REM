@@ -228,6 +228,12 @@ public static class PdfService
         "violet" => ("#7c3aed", "#ede9fe", "#2e1065"),
         "teal" => ("#0d9488", "#ccfbf1", "#042f2e"),
         "slate" => ("#475569", "#e2e8f0", "#0f172a"),
+        "red" => ("#dc2626", "#fee2e2", "#7f1d1d"),
+        "orange" => ("#ea580c", "#ffedd5", "#7c2d12"),
+        "pink" => ("#db2777", "#fce7f3", "#831843"),
+        "cyan" => ("#0891b2", "#cffafe", "#164e63"),
+        "lime" => ("#65a30d", "#ecfccb", "#365314"),
+        "purple" => ("#9333ea", "#f3e8ff", "#4a1d96"),
         _ => ("#1b6ec2", "#cfe1f5", "#10243f")
     };
 
