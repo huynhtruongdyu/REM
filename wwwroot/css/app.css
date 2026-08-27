@@ -321,6 +321,7 @@ code {
     z-index: 1001;
     display: none;
     min-width: 180px;
+    max-width: calc(100vw - 32px);
     margin-top: 4px;
     padding: 4px 0;
     list-style: none;
