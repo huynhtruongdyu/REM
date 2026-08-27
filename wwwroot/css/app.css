@@ -153,9 +153,14 @@ code {
     width: 100%;
 }
 
-.form-control-sm,
-.form-select-sm {
+.form-control-sm {
     padding: 3px 8px;
+    font-size: 12px;
+    min-height: 28px;
+}
+
+.form-select-sm {
+    padding: 3px 24px 3px 8px;
     font-size: 12px;
     min-height: 28px;
 }
@@ -174,6 +179,8 @@ code {
     border-bottom: 1px solid var(--borderColor-default);
     background: var(--bgColor-muted);
     font-weight: 600;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
 }
 
 .card-body { padding: 12px; }
