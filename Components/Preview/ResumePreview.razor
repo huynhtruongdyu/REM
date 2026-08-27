@@ -1,7 +1,7 @@
 @inject ResumeState State
 @implements IDisposable
 
-<div class="resume-preview theme-@(State.Resume.Theme ?? "default") scheme-@(State.Resume.ColorScheme ?? "blue")">
+<div class="resume-preview theme-@(State.Resume.Theme ?? "default") scheme-@(State.Resume.ColorScheme ?? "blue") fs-@(State.Resume.FontSize ?? "medium")">
     @if (HasPersonal())
     {
         <header class="rp-header">

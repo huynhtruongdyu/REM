@@ -40,6 +40,15 @@
             <option value="cyan">Cyan</option>
             <option value="lime">Lime</option>
             <option value="purple">Purple</option>
+            <option value="black">Black</option>
+        </select>
+        <label class="form-label mb-0 small" for="fontSelect">Size</label>
+        <select id="fontSelect" class="form-select form-select-sm w-auto" value="@State.Resume.FontSize"
+                @onchange="OnFontSizeChange">
+            <option value="small">Small</option>
+            <option value="medium">Medium</option>
+            <option value="large">Large</option>
+            <option value="xlarge">Extra Large</option>
         </select>
     </div>
 
@@ -239,6 +248,12 @@
     private void OnSchemeChange(ChangeEventArgs e)
     {
         State.Resume.ColorScheme = e.Value?.ToString() ?? "blue";
+        State.MarkDirty();
+    }
+
+    private void OnFontSizeChange(ChangeEventArgs e)
+    {
+        State.Resume.FontSize = e.Value?.ToString() ?? "medium";
         State.MarkDirty();
     }
 

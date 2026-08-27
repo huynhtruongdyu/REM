@@ -22,5 +22,7 @@ public class ResumeDocument
 
     public string Theme { get; set; } = "default";
 
-    public string ColorScheme { get; set; } = "blue";
+    public string ColorScheme { get; set; } = "black";
+
+    public string FontSize { get; set; } = "medium";
 }
