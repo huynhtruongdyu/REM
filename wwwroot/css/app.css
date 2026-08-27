@@ -605,6 +605,10 @@ code {
 }
 
 /* ---- Theme: Default (accent left border) ---- */
+.theme-default {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
 .theme-default h1,
 .theme-default .rp-strong {
     color: var(--accent-ink);
@@ -625,6 +629,10 @@ code {
 }
 
 /* ---- Theme: Minimalism (black/white, airy) ---- */
+.theme-minimal {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
 .theme-minimal h1 {
     color: #000;
     font-weight: 700;
@@ -655,6 +663,10 @@ code {
 }
 
 /* ---- Theme: Modern (accent filled section bars) ---- */
+.theme-modern {
+    font-family: "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
+}
+
 .theme-modern h1 {
     color: var(--accent-ink);
 }
@@ -725,6 +737,7 @@ code {
 
 /* ---- Theme: Compact (dense) ---- */
 .theme-compact {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     font-size: 10pt;
     line-height: 1.35;
 }
@@ -759,6 +772,10 @@ code {
 }
 
 /* ---- Theme: Elegant (refined, thin rules) ---- */
+.theme-elegant {
+    font-family: Georgia, "Times New Roman", Times, serif;
+}
+
 .theme-elegant h1 {
     font-weight: 600;
     font-size: 1.8rem;
@@ -791,6 +808,10 @@ code {
 }
 
 /* ---- Theme: Professional (bold name rule) ---- */
+.theme-professional {
+    font-family: "Segoe UI", Roboto, system-ui, sans-serif;
+}
+
 .theme-professional h1 {
     color: var(--accent-ink);
     border-bottom: 2px solid var(--accent);
@@ -815,6 +836,10 @@ code {
 }
 
 /* ---- Theme: Creative (soft accent panel) ---- */
+.theme-creative {
+    font-family: "Trebuchet MS", "Segoe UI", Verdana, sans-serif;
+}
+
 .theme-creative h1 {
     color: var(--accent-ink);
     font-weight: 800;
@@ -868,6 +893,10 @@ code {
 }
 
 /* ---- Theme: Bold (heavy type) ---- */
+.theme-bold {
+    font-family: "Segoe UI", system-ui, Arial, sans-serif;
+}
+
 .theme-bold h1 {
     color: var(--accent-ink);
     font-size: 2.2rem;
