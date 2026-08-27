@@ -1,23 +1,9 @@
 html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
 }
 
 h1:focus {
     outline: none;
-}
-
-a, .btn-link {
-    color: #0071c1;
-}
-
-.btn-primary {
-    color: #fff;
-    background-color: #1b6ec2;
-    border-color: #1861ac;
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
 .content {
@@ -33,7 +19,7 @@ a, .btn-link {
 }
 
 .validation-message {
-    color: red;
+    color: var(--fgColor-danger);
 }
 
 #blazor-error-ui {
@@ -78,14 +64,14 @@ a, .btn-link {
 
     .loading-progress circle {
         fill: none;
-        stroke: #e0e0e0;
+        stroke: var(--borderColor-default, #e0e0e0);
         stroke-width: 0.6rem;
         transform-origin: 50% 50%;
         transform: rotate(-90deg);
     }
 
         .loading-progress circle:last-child {
-            stroke: #1b6ec2;
+            stroke: var(--fgColor-accent);
             stroke-dasharray: calc(3.141 * var(--blazor-load-percentage, 0%) * 0.8), 500%;
             transition: stroke-dasharray 0.05s ease-in-out;
         }
@@ -105,13 +91,122 @@ code {
     color: #c02d76;
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-    color: var(--bs-secondary-color);
-    text-align: end;
+/* ===== Primer compat layer =====
+   Implements the Bootstrap utility vocabulary still used by the markup,
+   mapped onto Primer CSS variables. Primer's own classes (btn, form-control,
+   form-select, form-checkbox, Label, d-flex, flex-*, color-fg-*, color-bg-*)
+   are NOT redefined here. */
+.row { display: flex; flex-wrap: wrap; margin: 0 -8px; }
+.g-2 { gap: var(--base-size-8, 8px); }
+.g-3 { gap: var(--base-size-16, 16px); }
+.row.g-2, .row.g-3 { gap: 0; }
+
+.col-12, .col-md-3, .col-md-4, .col-md-6 {
+    padding: 0 8px 16px;
+    box-sizing: border-box;
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-    text-align: start;
+.col-12 { flex: 0 0 100%; max-width: 100%; }
+.col-md-3 { flex: 0 0 25%; max-width: 25%; }
+.col-md-4 { flex: 0 0 33.3333%; max-width: 33.3333%; }
+.col-md-6 { flex: 0 0 50%; max-width: 50%; }
+
+.flex-grow-1 { flex: 1 1 auto; }
+.justify-content-between { justify-content: space-between; }
+.justify-content-end { justify-content: flex-end; }
+.align-items-center { align-items: center; }
+.align-items-end { align-items: flex-end; }
+
+.gap-1 { gap: var(--base-size-4, 4px); }
+.gap-2 { gap: var(--base-size-8, 8px); }
+.mb-2 { margin-bottom: var(--base-size-8, 8px); }
+.mb-3 { margin-bottom: var(--base-size-16, 16px); }
+.mt-2 { margin-top: var(--base-size-8, 8px); }
+.p-2 { padding: var(--base-size-8, 8px); }
+.p-3 { padding: var(--base-size-16, 16px); }
+.px-1 { padding-left: var(--base-size-4, 4px); padding-right: var(--base-size-4, 4px); }
+.px-3 { padding-left: var(--base-size-16, 16px); padding-right: var(--base-size-16, 16px); }
+.py-2 { padding-top: var(--base-size-8, 8px); padding-bottom: var(--base-size-8, 8px); }
+.py-0 { padding-top: 0; padding-bottom: 0; }
+.ms-auto { margin-left: auto; }
+.mb-0 { margin-bottom: 0; }
+.overflow-auto { overflow: auto; }
+
+.border { border: 1px solid var(--borderColor-default); }
+.border-bottom { border-bottom: 1px solid var(--borderColor-default); }
+.rounded { border-radius: 6px; }
+.rounded-2 { border-radius: 6px; }
+
+.text-center { text-align: center; }
+.text-decoration-line-through { text-decoration: line-through; }
+.small { font-size: 12px; }
+
+.form-label {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--fgColor-default);
+}
+
+.form-control {
+    width: 100%;
+}
+
+.form-control-sm,
+.form-select-sm {
+    padding: 3px 8px;
+    font-size: 12px;
+    min-height: 28px;
+}
+
+.w-auto { width: auto; }
+
+/* Primer does not ship a .card component; provide a Primer-styled one. */
+.card {
+    border: 1px solid var(--borderColor-default);
+    border-radius: 6px;
+    background: var(--bgColor-default);
+}
+
+.card-header {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--borderColor-default);
+    background: var(--bgColor-muted);
+    font-weight: 600;
+}
+
+.card-body { padding: 12px; }
+
+/* Primer has no .btn-group; connect adjacent buttons. */
+.btn-group { display: inline-flex; }
+
+.btn-group > .btn:not(:first-child) {
+    margin-left: -1px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.btn-group > .btn:not(:last-child) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+/* Custom dropdown caret (Primer normally uses an Octicon). */
+.dropdown-caret {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    vertical-align: middle;
+    border-style: solid;
+    border-width: 4px 4px 0 4px;
+    border-color: currentColor transparent transparent transparent;
+    margin-left: 4px;
+    transition: transform 0.2s ease;
+}
+
+[aria-expanded="true"] .dropdown-caret {
+    transform: rotate(180deg);
 }
 
 /* ===== Resume builder layout ===== */
@@ -126,6 +221,9 @@ code {
     position: sticky;
     top: 0;
     z-index: 10;
+    background: var(--bgColor-default);
+    border-bottom: 1px solid var(--borderColor-default);
+    box-shadow: 0 1px 0 var(--shadow-resting-medium, rgba(31, 35, 40, 0.04));
 }
 
 .builder-split {
@@ -138,7 +236,7 @@ code {
 
 .editor-pane {
     overflow-y: auto;
-    border-right: 1px solid #dee2e6;
+    border-right: 1px solid var(--borderColor-default);
 }
 
 .preview-pane {
@@ -147,14 +245,14 @@ code {
 
 .editor-pane .form-label {
     font-weight: 600;
-    color: #1f2937;
+    color: var(--fgColor-default);
 }
 
 .drag-handle,
 .section-drag-handle {
     cursor: grab;
     user-select: none;
-    color: #6c757d;
+    color: var(--fgColor-muted);
 }
 
     .drag-handle:active,
@@ -184,8 +282,8 @@ code {
     min-height: 0;
     display: flex;
     flex-direction: column;
-    background: #fbfcfe;
-    border-right: 1px solid #e3e8ef;
+    background: var(--bgColor-muted);
+    border-right: 1px solid var(--borderColor-default);
 }
 
 .sidebar-head {
@@ -194,8 +292,8 @@ code {
     justify-content: space-between;
     gap: .5rem;
     padding: .6rem .75rem;
-    background: #f1f4f9;
-    border-bottom: 1px solid #e3e8ef;
+    background: var(--bgColor-muted);
+    border-bottom: 1px solid var(--borderColor-default);
 }
 
 .sidebar-title {
@@ -216,8 +314,55 @@ code {
     z-index: 1000;
 }
 
-.dropdown-menu.show {
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
     z-index: 1001;
+    display: none;
+    min-width: 180px;
+    margin-top: 4px;
+    padding: 4px 0;
+    list-style: none;
+    background: var(--bgColor-default);
+    border: 1px solid var(--borderColor-default);
+    border-radius: 6px;
+    box-shadow: 0 8px 24px rgba(31, 35, 40, 0.12);
+}
+
+/* Hide Primer's default pseudo-element carets on the menu box itself */
+.dropdown-menu::before,
+.dropdown-menu::after {
+    display: none !important;
+}
+
+.dropdown-menu.dropdown-menu-end {
+    left: auto;
+    right: 0;
+}
+
+.dropdown-menu.show {
+    display: block;
+    z-index: 1001;
+}
+
+.dropdown-item {
+    display: block;
+    width: 100%;
+    padding: 6px 16px;
+    border: 0;
+    background: transparent;
+    color: var(--fgColor-default);
+    font-size: 14px;
+    text-align: left;
+    cursor: pointer;
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+    background: var(--bgColor-accent-muted);
+    color: var(--fgColor-default);
+    outline: none;
 }
 
 .resume-count {
@@ -228,8 +373,8 @@ code {
     height: 1.4rem;
     padding: 0 .35rem;
     border-radius: 999px;
-    background: #d7e3f4;
-    color: #1b6ec2;
+    background: var(--bgColor-accent-muted);
+    color: var(--fgColor-accent);
     font-size: .72rem;
     font-weight: 700;
 }
@@ -237,6 +382,23 @@ code {
 .sidebar-list {
     overflow-y: auto;
     padding: .4rem;
+}
+
+.sidebar-footer {
+    padding: .6rem .75rem;
+    border-top: 1px solid var(--borderColor-default);
+    background: var(--bgColor-muted);
+    font-size: .8rem;
+    color: var(--fgColor-muted);
+}
+
+.sidebar-footer a {
+    color: var(--fgColor-accent);
+    text-decoration: none;
+}
+
+.sidebar-footer a:hover {
+    text-decoration: underline;
 }
 
 .resume-item {
@@ -253,12 +415,12 @@ code {
 }
 
 .resume-item:hover {
-    background: #eef3fb;
+    background: var(--bgColor-accent-muted);
 }
 
 .resume-item.active {
-    background: #e7f0ff;
-    border-color: #b9d3f5;
+    background: var(--bgColor-accent-muted);
+    border-color: var(--borderColor-accent-emphasis);
 }
 
 .resume-dot {
@@ -277,7 +439,7 @@ code {
 .resume-name {
     font-weight: 600;
     font-size: .9rem;
-    color: #1f2937;
+    color: var(--fgColor-default);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -285,7 +447,7 @@ code {
 
 .resume-meta {
     font-size: .72rem;
-    color: #8a94a6;
+    color: var(--fgColor-muted);
 }
 
 .resume-item-actions {
@@ -314,7 +476,7 @@ code {
     font-size: .85rem;
     line-height: 1;
     border-radius: .4rem;
-    color: #5b6573;
+    color: var(--fgColor-muted);
 }
 
 .btn-icon:hover {
@@ -652,6 +814,8 @@ code {
     .preview-pane {
         max-height: none;
     }
+
+    .col-md-3, .col-md-4, .col-md-6 { flex: 0 0 100%; max-width: 100%; }
 }
 
 /* ===== Print: show only the preview ===== */
@@ -683,11 +847,11 @@ code {
 
 .collapse-toggle {
     text-decoration: none;
-    color: #6c757d;
+    color: var(--fgColor-muted);
     font-size: 1rem;
     line-height: 1;
 }
 
 .collapse-toggle:hover {
-    color: #1b6ec2;
+    color: var(--fgColor-accent);
 }

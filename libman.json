@@ -3,8 +3,12 @@
   "defaultProvider": "cdnjs",
   "libraries": [
     {
-      "library": "jquery@4.0.0",
-      "destination": "wwwroot\\lib\\jquery"
+      "library": "@primer/css@21.5.0",
+      "destination": "wwwroot\\lib\\primer",
+      "provider": "jsdelivr",
+      "files": [
+        "dist/primer.css"
+      ]
     },
     {
       "library": "Sortable@1.15.6",

@@ -7,7 +7,7 @@
                        KeySelector="e => e.Id"
                        Context="item">
         <ItemFields>
-            <div class="row g-2">
+            <div class="row g-3">
                 <div class="col-md-6">
                     <label class="form-label">Institution</label>
                     <InputText class="form-control" @bind-Value="item.Institution" @bind:event="oninput" />
@@ -20,17 +20,17 @@
                     <label class="form-label">Field of study</label>
                     <InputText class="form-control" @bind-Value="item.FieldOfStudy" @bind:event="oninput" />
                 </div>
-                <div class="col-md-3">
-                    <label class="form-label">Start</label>
-                    <InputDate class="form-control" @bind-Value="item.StartDate" />
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label">End</label>
-                    <InputDate class="form-control" @bind-Value="item.EndDate" />
-                </div>
                 <div class="col-md-6">
                     <label class="form-label">GPA</label>
                     <InputText class="form-control" @bind-Value="item.Gpa" @bind:event="oninput" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Start</label>
+                    <InputDate class="form-control" @bind-Value="item.StartDate" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">End</label>
+                    <InputDate class="form-control" @bind-Value="item.EndDate" />
                 </div>
                 <div class="col-12">
                     <label class="form-label">Description</label>

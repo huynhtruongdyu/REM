@@ -7,7 +7,7 @@
                        KeySelector="e => e.Id"
                        Context="item">
         <ItemFields>
-            <div class="row g-2">
+            <div class="row g-3">
                 <div class="col-md-6">
                     <label class="form-label">Company</label>
                     <InputText class="form-control" @bind-Value="item.Company" @bind:event="oninput" />
@@ -24,10 +24,10 @@
                     <label class="form-label">End</label>
                     <InputDate class="form-control" @bind-Value="item.EndDate" />
                 </div>
-                <div class="col-md-4 d-flex align-items-end">
-                    <div class="form-check">
-                        <InputCheckbox class="form-check-input" @bind-Value="item.IsCurrent" />
-                        <label class="form-check-label">Current</label>
+                <div class="col-md-4 d-flex flex-items-end">
+                    <div class="form-checkbox">
+                        <InputCheckbox @bind-Value="item.IsCurrent" />
+                        <label>Current</label>
                     </div>
                 </div>
                 <div class="col-12">

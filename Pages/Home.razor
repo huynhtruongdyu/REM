@@ -6,20 +6,20 @@
 @inject IJSRuntime JS
 @implements IDisposable
 
-<div class="builder-toolbar d-flex flex-wrap align-items-center gap-2 px-3 py-2 border-bottom bg-white">
+<div class="builder-toolbar d-flex flex-wrap flex-items-center gap-2 px-3 py-2 border-bottom color-bg-default">
     <strong>REM</strong>
-    <span class="badge @(State.IsDirty ? "bg-warning text-dark" : "bg-success")">
+    <span class="Label @(State.IsDirty ? "Label--warning" : "Label--success")">
         @(State.IsDirty ? "Unsaved" : "Saved")
     </span>
 
-    <div class="btn-group btn-group-sm">
-        <button class="btn btn-outline-secondary" @onclick="() => State.Undo()" disabled="@(!State.CanUndo)"
+    <div class="btn-group">
+        <button class="btn btn-sm" @onclick="() => State.Undo()" disabled="@(!State.CanUndo)"
                 title="Undo (Ctrl+Z)">Undo</button>
-        <button class="btn btn-outline-secondary" @onclick="() => State.Redo()" disabled="@(!State.CanRedo)"
+        <button class="btn btn-sm" @onclick="() => State.Redo()" disabled="@(!State.CanRedo)"
                 title="Redo (Ctrl+Y)">Redo</button>
     </div>
 
-    <div class="d-flex align-items-center gap-2">
+    <div class="d-flex flex-items-center gap-2">
         <label class="form-label mb-0 small" for="themeSelect">Theme</label>
         <select id="themeSelect" class="form-select form-select-sm w-auto" value="@State.Resume.Theme"
                 @onchange="OnThemeChange">
@@ -46,10 +46,36 @@
 
     <div class="ms-auto d-flex flex-wrap gap-2">
 
-        <div class="btn-group btn-group-sm">
-            <button class="btn btn-primary dropdown-toggle" type="button" @onclick="ToggleExportMenu"
+        <button class="btn btn-sm" @onclick="Import">Import</button>
+
+        <div class="dropdown">
+            <button class="btn btn-sm dropdown-toggle" type="button" @onclick="ToggleExportJsonMenu"
+                    aria-expanded="@_exportJsonMenuOpen">
+                Export<span class="dropdown-caret"></span>
+            </button>
+            @if (_exportJsonMenuOpen)
+            {
+                <ul class="dropdown-menu dropdown-menu-end show">
+                    <li><button class="dropdown-item"
+                                    @onclick="async () => { await ExportResume(); CloseExportJsonMenu(); }">Resume (JSON)</button>
+                    </li>
+                    <li><button class="dropdown-item"
+                                    @onclick="async () => { await ExportLibrary(); CloseExportJsonMenu(); }">Library (JSON)</button>
+                    </li>
+                </ul>
+            }
+        </div>
+
+        <button class="btn btn-sm" @onclick="LoadSample">Load Sample</button>
+
+        <button class="btn btn-danger btn-sm" @onclick="Clear">Clear</button>
+
+        <button class="btn btn-sm" @onclick="Save">Save</button>
+
+        <div class="dropdown">
+            <button class="btn btn-primary btn-sm dropdown-toggle" type="button" @onclick="ToggleExportMenu"
                     aria-expanded="@_exportMenuOpen">
-                Download
+                Download<span class="dropdown-caret"></span>
             </button>
             @if (_exportMenuOpen)
             {
@@ -61,37 +87,16 @@
                     </li>
                     <li><button class="dropdown-item"
                                     @onclick="async () => { await DownloadMarkdown(); CloseExportMenu(); }">Markdown</button></li>
-                    </ul>
-                }
-                @* <button class="btn btn-outline-secondary" @onclick="PreviewPdf">Preview</button> *@
-                <button class="btn btn-outline-secondary" @onclick="Import">Import</button>
-                <button class="btn btn-outline-secondary dropdown-toggle" type="button" @onclick="ToggleExportJsonMenu"
-                        aria-expanded="@_exportJsonMenuOpen">
-                    Export
-                </button>
-                @if (_exportJsonMenuOpen)
-                {
-                    <ul class="dropdown-menu dropdown-menu-end show">
-                        <li><button class="dropdown-item"
-                                        @onclick="async () => { await ExportResume(); CloseExportJsonMenu(); }">Resume (JSON)</button>
-                        </li>
-                        <li><button class="dropdown-item"
-                                        @onclick="async () => { await ExportLibrary(); CloseExportJsonMenu(); }">Library (JSON)</button>
-                        </li>
-                    </ul>
-                }
-            </div>
-            @if (_exportMenuOpen || _exportJsonMenuOpen)
-            {
-                <div class="dropdown-backdrop" @onclick="() => { CloseExportMenu(); CloseExportJsonMenu(); }"></div>
+                </ul>
             }
-            <div class="btn-group btn-group-sm">
-                <button class="btn btn-outline-success" @onclick="Save">Save</button>
-                <button class="btn btn-outline-secondary" @onclick="LoadSample">Load Sample</button>
-                <button class="btn btn-outline-danger" @onclick="Clear">Clear</button>
-            </div>
         </div>
+
+        @if (_exportMenuOpen || _exportJsonMenuOpen)
+        {
+            <div class="dropdown-backdrop" @onclick="() => { CloseExportMenu(); CloseExportJsonMenu(); }"></div>
+        }
     </div>
+</div>
 
     <div class="builder-body d-flex">
         <aside class="resume-sidebar">
@@ -100,22 +105,25 @@
                     <strong>Resumes</strong>
                     <span class="resume-count">@State.Resumes.Count()</span>
                 </div>
-                <div class="dropdown">
-                    <button class="btn btn-sm btn-primary" title="New resume" @onclick="ToggleNewMenu">+ New</button>
-                    @if (_newMenuOpen)
-                    {
-                        <ul class="dropdown-menu show dropdown-menu-end">
-                            <li><button class="dropdown-item" @onclick="() => NewResume(false)">Blank resume</button></li>
-                            <li><button class="dropdown-item" @onclick="() => NewResume(true)">From sample</button></li>
-                        </ul>
-                    }
+                <div class="d-flex flex-items-center gap-2">
+                    <a href="/about" class="btn btn-sm">About</a>
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-primary" title="New resume" @onclick="ToggleNewMenu" aria-expanded="@_newMenuOpen">+ New<span class="dropdown-caret"></span></button>
+                        @if (_newMenuOpen)
+                        {
+                            <ul class="dropdown-menu show dropdown-menu-end">
+                                <li><button class="dropdown-item" @onclick="() => NewResume(false)">Blank resume</button></li>
+                                <li><button class="dropdown-item" @onclick="() => NewResume(true)">From sample</button></li>
+                            </ul>
+                        }
+                    </div>
                 </div>
                 @if (_newMenuOpen)
                 {
                     <div class="dropdown-backdrop" @onclick="CloseNewMenu"></div>
                 }
             </div>
-            <div class="sidebar-list flex-grow-1 overflow-auto">
+            <div class="sidebar-list flex-1 overflow-auto">
                 @foreach (var r in State.Resumes)
                 {
                     <div class="resume-item @(r.Id == State.ActiveId ? "active" : "")" @onclick="() => OpenResume(r.Id)">
@@ -141,7 +149,7 @@
                                 <span class="hover-actions">
                                     <button class="btn btn-sm btn-icon" title="Duplicate" @onclick="e => Duplicate(e, r.Id)"
                                             @onclick:stopPropagation>⧉</button>
-                                    <button class="btn btn-sm btn-icon text-danger" title="Delete" @onclick="e => Delete(e, r.Id)"
+                                    <button class="btn btn-sm btn-icon color-fg-danger" title="Delete" @onclick="e => Delete(e, r.Id)"
                                             @onclick:stopPropagation>🗑</button>
                                 </span>
                             </div>
@@ -149,13 +157,16 @@
                     </div>
                 }
             </div>
+            <div class="sidebar-footer">
+                Powered by <a href="https://duyhuynh.net" target="_blank" rel="noopener noreferrer">duyhuynh.net</a>
+            </div>
         </aside>
 
-        <div class="builder-split flex-grow-1">
+        <div class="builder-split flex-1">
             <div class="editor-pane p-3">
                 <ResumeEditor @key="State.Resume" />
             </div>
-            <div class="preview-pane bg-light p-3">
+            <div class="preview-pane color-bg-muted p-3">
                 <ResumePreview @key="State.Resume" />
             </div>
         </div>
