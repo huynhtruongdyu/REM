@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Manrope:wght@400;600;700;800&family=Lora:wght@400;600;700&family=Merriweather:wght@400;700&family=Poppins:wght@400;600;700;800&family=Archivo:wght@700;800;900&family=JetBrains+Mono:wght@400;600&display=swap');
+
 html, body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
     min-width: 300px;
@@ -606,7 +608,7 @@ code {
 
 /* ---- Theme: Default (accent left border) ---- */
 .theme-default {
-    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
 .theme-default h1,
@@ -630,7 +632,7 @@ code {
 
 /* ---- Theme: Minimalism (black/white, airy) ---- */
 .theme-minimal {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: 'Inter', "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .theme-minimal h1 {
@@ -664,7 +666,7 @@ code {
 
 /* ---- Theme: Modern (accent filled section bars) ---- */
 .theme-modern {
-    font-family: "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
+    font-family: 'Manrope', system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 
 .theme-modern h1 {
@@ -700,7 +702,7 @@ code {
 
 /* ---- Theme: Classic (serif, traditional) ---- */
 .theme-classic {
-    font-family: Georgia, "Times New Roman", serif;
+    font-family: 'Merriweather', Georgia, "Times New Roman", serif;
 }
 
 .theme-classic h1 {
@@ -737,7 +739,7 @@ code {
 
 /* ---- Theme: Compact (dense) ---- */
 .theme-compact {
-    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     font-size: 10pt;
     line-height: 1.35;
 }
@@ -773,7 +775,7 @@ code {
 
 /* ---- Theme: Elegant (refined, thin rules) ---- */
 .theme-elegant {
-    font-family: Georgia, "Times New Roman", Times, serif;
+    font-family: 'Lora', Georgia, "Times New Roman", Times, serif;
 }
 
 .theme-elegant h1 {
@@ -809,7 +811,7 @@ code {
 
 /* ---- Theme: Professional (bold name rule) ---- */
 .theme-professional {
-    font-family: "Segoe UI", Roboto, system-ui, sans-serif;
+    font-family: 'Inter', "Segoe UI", Roboto, system-ui, sans-serif;
 }
 
 .theme-professional h1 {
@@ -837,7 +839,7 @@ code {
 
 /* ---- Theme: Creative (soft accent panel) ---- */
 .theme-creative {
-    font-family: "Trebuchet MS", "Segoe UI", Verdana, sans-serif;
+    font-family: 'Poppins', "Trebuchet MS", "Segoe UI", Verdana, sans-serif;
 }
 
 .theme-creative h1 {
@@ -868,7 +870,7 @@ code {
 
 /* ---- Theme: Technical (monospace) ---- */
 .theme-technical {
-    font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+    font-family: 'JetBrains Mono', ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
 }
 
 .theme-technical h1 {
@@ -894,7 +896,7 @@ code {
 
 /* ---- Theme: Bold (heavy type) ---- */
 .theme-bold {
-    font-family: "Segoe UI", system-ui, Arial, sans-serif;
+    font-family: 'Archivo', "Segoe UI", system-ui, Arial, sans-serif;
 }
 
 .theme-bold h1 {
