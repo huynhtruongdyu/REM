@@ -2,9 +2,9 @@
 @inject ResumeState State
 @implements IDisposable
 
-<div class="card mb-3 editor-section">
-    <div class="card-header d-flex flex-items-center gap-2">
-        <span class="section-drag-handle flex-1 @(IsHidden() ? "text-decoration-line-through color-fg-muted" : "")">@Title</span>
+<div class="Box mb-3 editor-section">
+    <div class="Box-header d-flex flex-items-center gap-2">
+        <h3 class="Box-title section-drag-handle flex-1 @(IsHidden() ? "text-decoration-line-through color-fg-muted" : "")">@Title</h3>
         <button type="button" class="btn btn-sm btn-link py-0 px-1 section-visibility-toggle"
                 title="Show or hide this section in the resume" @onclick="ToggleVisibility" @onclick:stopPropagation>
             @(IsHidden() ? "Show" : "Hide")
@@ -14,15 +14,17 @@
             @(State.IsSectionCollapsed(Key) ? "▸" : "▾")
         </button>
     </div>
-    <div class="card-body @(State.IsSectionCollapsed(Key) ? "d-none" : "")">
+    <div class="Box-body @(State.IsSectionCollapsed(Key) ? "d-none" : "")">
         <SortableList Items="Items" KeySelector="KeySelector" OnReorder="Reorder" Context="item">
             <ItemTemplate>
-                <div class="border rounded p-2 mb-2">
-                <div class="d-flex flex-justify-between flex-items-center mb-2">
-                    <span class="drag-handle" title="Drag to reorder">&#10303;</span>
-                    <button class="btn btn-sm btn-outline color-fg-danger" @onclick="() => Remove(item)">Remove</button>
-                </div>
-                    @ItemFields(item)
+                <div class="Box mb-3">
+                    <div class="Box-header d-flex flex-justify-between flex-items-center py-2 px-3">
+                        <span class="drag-handle" title="Drag to reorder">&#10303;</span>
+                        <button class="btn btn-sm btn-danger" @onclick="() => Remove(item)">Remove</button>
+                    </div>
+                    <div class="Box-body p-3">
+                        @ItemFields(item)
+                    </div>
                 </div>
             </ItemTemplate>
         </SortableList>

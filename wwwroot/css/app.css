@@ -122,6 +122,7 @@ code {
 
 .gap-1 { gap: var(--base-size-4, 4px); }
 .gap-2 { gap: var(--base-size-8, 8px); }
+.gap-3 { gap: var(--base-size-16, 16px); }
 .mb-2 { margin-bottom: var(--base-size-8, 8px); }
 .mb-3 { margin-bottom: var(--base-size-16, 16px); }
 .mt-2 { margin-top: var(--base-size-8, 8px); }
@@ -170,23 +171,7 @@ code {
 
 .w-auto { width: auto; }
 
-/* Primer does not ship a .card component; provide a Primer-styled one. */
-.card {
-    border: 1px solid var(--borderColor-default);
-    border-radius: 6px;
-    background: var(--bgColor-default);
-}
 
-.card-header {
-    padding: 8px 12px;
-    border-bottom: 1px solid var(--borderColor-default);
-    background: var(--bgColor-muted);
-    font-weight: 600;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-}
-
-.card-body { padding: 12px; }
 
 /* Primer has no .btn-group; connect adjacent buttons. */
 .btn-group { display: inline-flex; }
@@ -947,7 +932,86 @@ code {
 .scheme-lime     { --accent: #65a30d; --accent-soft: #ecfccb; --accent-ink: #365314; }
 .scheme-purple   { --accent: #9333ea; --accent-soft: #f3e8ff; --accent-ink: #4a1d96; }
 
+.mobile-header-row {
+    width: 100%;
+}
+
+.brand {
+    font-size: 1.05rem;
+    letter-spacing: .02em;
+}
+
+@media (min-width: 992px) {
+    .mobile-header-row {
+        width: auto;
+        margin-right: .75rem;
+    }
+}
+
 @media (max-width: 991.98px) {
+    .builder-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 12px 12px !important;
+        gap: 12px;
+        position: static !important;
+        box-shadow: none !important;
+    }
+
+    .mobile-header-row {
+        padding-bottom: 8px;
+        border-bottom: 1px solid var(--borderColor-default);
+    }
+
+    .builder-toolbar .toolbar-contents {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+
+    .builder-toolbar .toolbar-selects {
+        display: grid !important;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px !important;
+        width: 100%;
+        padding-left: 0 !important;
+    }
+
+    .builder-toolbar .toolbar-selects .select-group {
+        flex-direction: column;
+        align-items: stretch !important;
+        gap: 2px !important;
+    }
+
+    .builder-toolbar .toolbar-selects .form-label {
+        font-size: 11px;
+        margin-bottom: 2px;
+        width: 100%;
+        text-align: left;
+    }
+
+    .builder-toolbar .toolbar-selects select {
+        width: 100% !important;
+    }
+
+    .builder-toolbar .toolbar-contents .ms-auto {
+        width: 100%;
+        margin-left: 0 !important;
+        margin-top: 0;
+        justify-content: center !important;
+        gap: 6px !important;
+    }
+
+    .builder-toolbar .toolbar-contents .ms-auto > * {
+        flex: 1 1 auto;
+        text-align: center;
+    }
+
+    .builder-toolbar .toolbar-contents .ms-auto .Label {
+        flex: 0 0 100%;
+        margin-bottom: 4px;
+    }
+
     .builder-layout {
         height: auto;
         overflow: visible;

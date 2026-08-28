@@ -7,9 +7,17 @@
 @implements IDisposable
 
 <div class="builder-toolbar d-flex flex-wrap flex-items-center gap-2 px-3 py-2 border-bottom color-bg-default">
-    <strong class="pr-3 border-right">REM</strong>
-    <div class="d-flex flex-items-center gap-2 pl-1">
-        <label class="form-label mb-0 small" for="themeSelect">Theme</label>
+    <div class="mobile-header-row d-flex flex-items-center flex-justify-between w-100">
+        <strong class="brand">REM</strong>
+        <button class="btn btn-sm btn-outline d-md-none" @onclick="ToggleMobileMenu">
+            @(_mobileMenuOpen ? "✕ Close" : "☰ Menu")
+        </button>
+    </div>
+
+    <div class="toolbar-contents @(_mobileMenuOpen ? "d-flex" : "d-none d-md-flex") flex-1 flex-column flex-md-row flex-wrap flex-md-items-center gap-2 w-100">
+        <div class="d-flex flex-wrap flex-items-center gap-3 pl-1 toolbar-selects">
+        <div class="d-flex flex-items-center gap-2 select-group">
+            <label class="form-label mb-0 small" for="themeSelect">Theme</label>
         <select id="themeSelect" class="form-select form-select-sm w-auto" value="@State.Resume.Theme"
                 @onchange="OnThemeChange">
             <option value="default">Default</option>
@@ -23,8 +31,10 @@
             <option value="technical">Technical</option>
             <option value="bold">Bold</option>
         </select>
-        <label class="form-label mb-0 small" for="schemeSelect">Color</label>
-        <select id="schemeSelect" class="form-select form-select-sm w-auto" value="@State.Resume.ColorScheme"
+        </div>
+        <div class="d-flex flex-items-center gap-2 select-group">
+            <label class="form-label mb-0 small" for="schemeSelect">Color</label>
+            <select id="schemeSelect" class="form-select form-select-sm w-auto" value="@State.Resume.ColorScheme"
                 @onchange="OnSchemeChange">
             <option value="blue">Blue</option>
             <option value="indigo">Indigo</option>
@@ -42,14 +52,17 @@
             <option value="purple">Purple</option>
             <option value="black">Black</option>
         </select>
-        <label class="form-label mb-0 small" for="fontSelect">Size</label>
-        <select id="fontSelect" class="form-select form-select-sm w-auto" value="@State.Resume.FontSize"
+        </div>
+        <div class="d-flex flex-items-center gap-2 select-group">
+            <label class="form-label mb-0 small" for="fontSelect">Size</label>
+            <select id="fontSelect" class="form-select form-select-sm w-auto" value="@State.Resume.FontSize"
                 @onchange="OnFontSizeChange">
             <option value="small">Small</option>
             <option value="medium">Medium</option>
             <option value="large">Large</option>
             <option value="xlarge">Extra Large</option>
         </select>
+        </div>
     </div>
 
     <div class="ms-auto d-flex flex-wrap align-items-center gap-2 justify-content-end">
@@ -115,6 +128,7 @@
             }
         </div>
     </div>
+</div>
 
     <div class="builder-body d-flex">
         <aside class="resume-sidebar">
@@ -368,6 +382,10 @@
     private void ToggleNewMenu() => _newMenuOpen = !_newMenuOpen;
 
     private void CloseNewMenu() => _newMenuOpen = false;
+
+    private bool _mobileMenuOpen;
+
+    private void ToggleMobileMenu() => _mobileMenuOpen = !_mobileMenuOpen;
 
     private bool _exportMenuOpen;
 
