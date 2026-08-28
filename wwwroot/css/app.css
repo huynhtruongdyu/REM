@@ -157,6 +157,11 @@ code {
     width: 100%;
 }
 
+textarea.form-control {
+    resize: vertical;
+    min-height: 80px;
+}
+
 .form-control-sm {
     padding: 3px 8px;
     font-size: 12px;

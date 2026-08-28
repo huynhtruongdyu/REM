@@ -22,13 +22,14 @@
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">End</label>
-                    <InputDate class="form-control" @bind-Value="item.EndDate" />
+                    <InputDate class="form-control" @bind-Value="item.EndDate" disabled="@item.IsCurrent" />
                 </div>
                 <div class="col-md-4 d-flex flex-items-end">
-                    <div class="form-checkbox">
-                        <InputCheckbox @bind-Value="item.IsCurrent" />
-                        <label>Current</label>
-                    </div>
+                    <label class="form-checkbox">
+                        <input type="checkbox" checked="@item.IsCurrent"
+                               @onchange="e => OnCurrentChanged(item, (bool)(e.Value ?? false))" />
+                        Current
+                    </label>
                 </div>
                 <div class="col-12">
                     <label class="form-label">Description</label>
@@ -38,3 +39,16 @@
         </ItemFields>
     </SectionListEditor>
 </EditForm>
+
+@code {
+    private void OnCurrentChanged(Experience item, bool current)
+    {
+        item.IsCurrent = current;
+        if (current)
+        {
+            item.EndDate = null;
+        }
+
+        State.MarkDirty();
+    }
+}
