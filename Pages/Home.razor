@@ -9,68 +9,79 @@
 <div class="builder-toolbar d-flex flex-wrap flex-items-center gap-2 px-3 py-2 border-bottom color-bg-default">
     <div class="mobile-header-row d-flex flex-items-center flex-justify-between w-100">
         <strong class="brand">REM</strong>
-        <button class="btn btn-sm btn-outline d-md-none" @onclick="ToggleMobileMenu">
-            @(_mobileMenuOpen ? "✕ Close" : "☰ Menu")
-        </button>
+        <div class="d-flex flex-items-center gap-2">
+            <button class="btn btn-sm d-lg-none" @onclick="ToggleDarkMode" title="Toggle dark mode">
+                <Octicons Name="@(_darkMode ? "Sun" : "Moon")" />
+            </button>
+            <button class="btn btn-sm btn-outline d-lg-none" @onclick="ToggleMobileMenu">
+                @(_mobileMenuOpen ? "✕ Close" : "☰ Menu")
+            </button>
+        </div>
     </div>
 
-    <div class="toolbar-contents @(_mobileMenuOpen ? "d-flex" : "d-none d-md-flex") flex-1 flex-column flex-md-row flex-wrap flex-md-items-center gap-2 w-100">
+    <div class="toolbar-contents @(_mobileMenuOpen ? "d-flex" : "d-none d-lg-flex") flex-1 flex-column flex-lg-row flex-wrap flex-lg-items-center gap-2 w-100">
     <div class="ms-auto d-flex flex-wrap align-items-center gap-2 justify-content-end">
-        <button class="btn btn-sm" @onclick="ToggleDarkMode" title="Toggle dark mode">
+        <button class="btn btn-sm d-none d-lg-inline-flex" @onclick="ToggleDarkMode" title="Toggle dark mode">
             <Octicons Name="@(_darkMode ? "Sun" : "Moon")" />
         </button>
 
-        <div class="btn-group">
-            <button class="btn btn-sm" @onclick="() => State.Undo()" disabled="@(!State.CanUndo)"
-                    title="Undo (Ctrl+Z)">Undo</button>
-            <button class="btn btn-sm" @onclick="() => State.Redo()" disabled="@(!State.CanRedo)"
-                    title="Redo (Ctrl+Y)">Redo</button>
+        <div class="tb-group tb-group-1">
+            <div class="btn-group">
+                <button class="btn btn-sm" @onclick="() => State.Undo()" disabled="@(!State.CanUndo)"
+                        title="Undo (Ctrl+Z)">Undo</button>
+                <button class="btn btn-sm" @onclick="() => State.Redo()" disabled="@(!State.CanRedo)"
+                        title="Redo (Ctrl+Y)">Redo</button>
+            </div>
         </div>
 
-        <button class="btn btn-sm" @onclick="Import">Import</button>
+        <div class="tb-group tb-group-3">
+            <button class="btn btn-sm" @onclick="Import">Import</button>
 
-        <div class="dropdown">
-            <button class="btn btn-sm dropdown-toggle" type="button" @onclick="ToggleExportJsonMenu"
-                    aria-expanded="@_exportJsonMenuOpen">
-                Export<span class="dropdown-caret"></span>
-            </button>
-            @if (_exportJsonMenuOpen)
-            {
-                <ul class="dropdown-menu dropdown-menu-end show">
-                    <li><button class="dropdown-item"
-                                    @onclick="async () => { await ExportResume(); CloseExportJsonMenu(); }">Resume (JSON)</button>
-                    </li>
-                    <li><button class="dropdown-item"
-                                    @onclick="async () => { await ExportLibrary(); CloseExportJsonMenu(); }">Library (JSON)</button>
-                    </li>
-                </ul>
-            }
-        </div>
-
-        <button class="btn btn-sm" @onclick="LoadSample">Load Sample</button>
-
-        <button class="btn btn-danger btn-sm" @onclick="Clear">Clear</button>
-
-        <button class="btn btn-sm" @onclick="Save">Save</button>
-
-        <div class="dropdown">
-            <button class="btn btn-primary btn-sm dropdown-toggle" type="button" @onclick="ToggleExportMenu"
-                    aria-expanded="@_exportMenuOpen">
-                Download<span class="dropdown-caret"></span>
-            </button>
-            @if (_exportMenuOpen)
-            {
-                <ul class="dropdown-menu dropdown-menu-end show">
-                    <li><button class="dropdown-item"
-                                    @onclick="async () => { await DownloadTextPdf(); CloseExportMenu(); }">PDF (text)</button>
-                    </li>
-                    <li><button class="dropdown-item" @onclick="() => { ImagePdf(); CloseExportMenu(); }">Image PDF</button>
-                    </li>
-                    <li><button class="dropdown-item"
-                                    @onclick="async () => { await DownloadMarkdown(); CloseExportMenu(); }">Markdown</button></li>
+            <div class="dropdown">
+                <button class="btn btn-sm dropdown-toggle" type="button" @onclick="ToggleExportJsonMenu"
+                        aria-expanded="@_exportJsonMenuOpen">
+                    Export<span class="dropdown-caret"></span>
+                </button>
+                @if (_exportJsonMenuOpen)
+                {
+                    <ul class="dropdown-menu dropdown-menu-end show">
+                        <li><button class="dropdown-item"
+                                        @onclick="async () => { await ExportResume(); CloseExportJsonMenu(); }">Resume (JSON)</button>
+                        </li>
+                        <li><button class="dropdown-item"
+                                        @onclick="async () => { await ExportLibrary(); CloseExportJsonMenu(); }">Library (JSON)</button>
+                        </li>
                     </ul>
                 }
             </div>
+
+            <button class="btn btn-sm" @onclick="LoadSample">Load Sample</button>
+        </div>
+
+        <div class="tb-group tb-group-3">
+            <button class="btn btn-danger btn-sm" @onclick="Clear">Clear</button>
+
+            <button class="btn btn-sm" @onclick="Save">Save</button>
+
+            <div class="dropdown">
+                <button class="btn btn-primary btn-sm dropdown-toggle" type="button" @onclick="ToggleExportMenu"
+                        aria-expanded="@_exportMenuOpen">
+                    Download<span class="dropdown-caret"></span>
+                </button>
+                @if (_exportMenuOpen)
+                {
+                    <ul class="dropdown-menu dropdown-menu-end show">
+                        <li><button class="dropdown-item"
+                                        @onclick="async () => { await DownloadTextPdf(); CloseExportMenu(); }">PDF (text)</button>
+                        </li>
+                        <li><button class="dropdown-item" @onclick="() => { ImagePdf(); CloseExportMenu(); }">Image PDF</button>
+                        </li>
+                        <li><button class="dropdown-item"
+                                        @onclick="async () => { await DownloadMarkdown(); CloseExportMenu(); }">Markdown</button></li>
+                        </ul>
+                }
+            </div>
+        </div>
 
             @if (_exportMenuOpen || _exportJsonMenuOpen)
             {
@@ -79,6 +90,11 @@
         </div>
     </div>
 </div>
+
+@if (_mobileMenuOpen)
+{
+    <div class="dropdown-backdrop" @onclick="ToggleMobileMenu"></div>
+}
 
     <div class="builder-body d-flex">
         <aside class="resume-sidebar">

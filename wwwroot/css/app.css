@@ -610,6 +610,7 @@ textarea.form-control {
     justify-content: space-between;
     align-items: baseline;
     gap: 1rem;
+    flex-wrap: wrap;
 }
 
 .rp-strong {
@@ -992,11 +993,21 @@ textarea.form-control {
     }
 }
 
+.builder-toolbar .toolbar-contents .tb-group {
+    display: inline-flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    align-items: center;
+    width: auto;
+}
+
 @media (max-width: 991.98px) {
     .builder-toolbar {
         flex-direction: column;
-        align-items: stretch;
+        align-items: stretch !important;
+        flex-wrap: nowrap;
         padding: 12px 12px !important;
+        width: 100%;
         gap: 12px;
         position: static !important;
         box-shadow: none !important;
@@ -1010,6 +1021,7 @@ textarea.form-control {
     .builder-toolbar .toolbar-contents {
         flex-direction: column;
         align-items: stretch;
+        width: 100%;
         gap: 12px;
     }
 
@@ -1039,21 +1051,58 @@ textarea.form-control {
     }
 
     .builder-toolbar .toolbar-contents .ms-auto {
+        display: flex;
+        flex-direction: column;
         width: 100%;
         margin-left: 0 !important;
         margin-top: 0;
-        justify-content: center !important;
-        gap: 6px !important;
+        gap: 8px !important;
+        justify-content: stretch !important;
     }
 
-    .builder-toolbar .toolbar-contents .ms-auto > * {
-        flex: 1 1 auto;
-        text-align: center;
+    .builder-toolbar .toolbar-contents .tb-group {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        width: 100%;
+        gap: 6px;
     }
 
-    .builder-toolbar .toolbar-contents .ms-auto .Label {
-        flex: 0 0 100%;
-        margin-bottom: 4px;
+    .builder-toolbar .toolbar-contents .tb-group.tb-group-1 {
+        grid-template-columns: 1fr;
+    }
+
+    .builder-toolbar .toolbar-contents .tb-group > * {
+        min-width: 0;
+    }
+
+    .builder-toolbar .toolbar-contents .tb-group .btn,
+    .builder-toolbar .toolbar-contents .tb-group .dropdown-toggle {
+        width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .builder-toolbar .toolbar-contents .tb-group .dropdown {
+        display: flex;
+    }
+
+    .builder-toolbar .toolbar-contents .tb-group .btn-group {
+        display: flex;
+        width: 100%;
+    }
+
+    .builder-toolbar .toolbar-contents .tb-group .btn-group > .btn {
+        flex: 1 1 0;
+        min-width: 0;
+    }
+
+    .builder-toolbar .toolbar-contents:not(.d-none) {
+        background: var(--bgColor-muted);
+        border: 1px solid var(--borderColor-default);
+        border-radius: 8px;
+        padding: 12px;
+        margin-top: 4px;
     }
 
     .builder-layout {
