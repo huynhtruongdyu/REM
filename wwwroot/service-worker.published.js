@@ -46,18 +46,39 @@ async function onActivate(event) {
 }
 
 async function onFetch(event) {
-    let cachedResponse = null;
-    if (event.request.method === 'GET') {
-        // For all navigation requests, try to serve index.html from cache,
-        // unless that request is for an offline resource.
-        // If you need some URLs to be server-rendered, edit the following check to exclude those URLs
-        const shouldServeIndexHtml = event.request.mode === 'navigate'
-            && !manifestUrlList.some(url => url === event.request.url);
-
-        const request = shouldServeIndexHtml ? 'index.html' : event.request;
-        const cache = await caches.open(cacheName);
-        cachedResponse = await cache.match(request);
+    if (event.request.method !== 'GET') {
+        return fetch(event.request);
     }
 
-    return cachedResponse || fetch(event.request);
+    // For all navigation requests, resolve to index.html unless that request
+    // is for a known offline resource.
+    // If you need some URLs to be server-rendered, edit the following check to exclude those URLs
+    const shouldServeIndexHtml = event.request.mode === 'navigate'
+        && !manifestUrlList.some(url => url === event.request.url);
+
+    const request = shouldServeIndexHtml ? 'index.html' : event.request;
+
+    // Network-first: always try the network so new deployments show up on a
+    // normal refresh, falling back to the cache only when offline.
+    try {
+        const networkResponse = await fetch(event.request);
+        if (networkResponse && networkResponse.status === 200) {
+            const cache = await caches.open(cacheName);
+            cache.put(request, networkResponse.clone());
+        }
+        return networkResponse;
+    } catch (e) {
+        const cache = await caches.open(cacheName);
+        const cachedResponse = await cache.match(request);
+        if (cachedResponse) {
+            return cachedResponse;
+        }
+        if (shouldServeIndexHtml) {
+            const indexFallback = await cache.match('index.html');
+            if (indexFallback) {
+                return indexFallback;
+            }
+        }
+        throw e;
+    }
 }
