@@ -4,11 +4,38 @@
 
 <div class="Box mb-3 editor-section">
     <div class="Box-header d-flex flex-items-center gap-2">
-        <h3 class="Box-title section-drag-handle flex-1 @(IsHidden() ? "text-decoration-line-through color-fg-muted" : "")">@Title</h3>
+        @if (CanRename)
+        {
+            @if (_editingTitle)
+            {
+                <input class="form-control form-control-sm flex-1" placeholder="Section title" @ref="_titleInput"
+                       value="@TitleValue" @oninput="e => OnTitleChanged((string?)e.Value)"
+                       @onblur="ExitTitleEdit" @onkeydown="OnTitleKey" />
+                <button type="button" class="btn btn-sm btn-link py-0 px-1" title="Done editing title"
+                        @onclick="ExitTitleEdit" @onclick:stopPropagation>✓</button>
+            }
+            else
+            {
+                <h3 class="Box-title section-drag-handle flex-1 @(IsHidden() ? "text-decoration-line-through color-fg-muted" : "")">@TitleValue</h3>
+                <button type="button" class="btn btn-sm btn-link py-0 px-1" title="Edit section title"
+                        @onclick="StartTitleEdit" @onclick:stopPropagation>Rename</button>
+            }
+        }
+        else
+        {
+            <h3 class="Box-title section-drag-handle flex-1 @(IsHidden() ? "text-decoration-line-through color-fg-muted" : "")">@Title</h3>
+        }
         <button type="button" class="btn btn-sm btn-link py-0 px-1 section-visibility-toggle"
                 title="Show or hide this section in the resume" @onclick="ToggleVisibility" @onclick:stopPropagation>
             @(IsHidden() ? "Show" : "Hide")
         </button>
+        @if (CanRemove)
+        {
+            <button type="button" class="btn btn-sm btn-link py-0 px-1 color-fg-danger" title="Remove this section"
+                    @onclick="() => OnRemove.InvokeAsync(null)" @onclick:stopPropagation>
+                Remove
+            </button>
+        }
         <button type="button" class="btn btn-sm btn-link py-0 px-1 collapse-toggle" title="Collapse / expand"
                 @onclick="ToggleCollapse" @onclick:stopPropagation>
             @(State.IsSectionCollapsed(Key) ? "▸" : "▾")
@@ -50,6 +77,48 @@
 
     [Parameter]
     public RenderFragment<TItem> ItemFields { get; set; } = default!;
+
+    [Parameter]
+    public bool CanRename { get; set; }
+
+    [Parameter]
+    public string? TitleValue { get; set; }
+
+    [Parameter]
+    public EventCallback<string> TitleValueChanged { get; set; }
+
+    [Parameter]
+    public bool CanRemove { get; set; }
+
+    [Parameter]
+    public EventCallback OnRemove { get; set; }
+
+    private void OnTitleChanged(string? value)
+    {
+        TitleValue = value;
+        TitleValueChanged.InvokeAsync(value);
+        State.MarkDirty();
+    }
+
+    private bool _editingTitle;
+    private ElementReference _titleInput;
+
+    private async Task StartTitleEdit()
+    {
+        _editingTitle = true;
+        await InvokeAsync(StateHasChanged);
+        await _titleInput.FocusAsync();
+    }
+
+    private void ExitTitleEdit() => _editingTitle = false;
+
+    private void OnTitleKey(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter" || e.Key == "Escape")
+        {
+            ExitTitleEdit();
+        }
+    }
 
     protected override void OnInitialized() => State.OnChange += StateHasChanged;
 

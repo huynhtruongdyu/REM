@@ -18,4 +18,12 @@ public static class SectionDefinitions
         Certifications,
         Languages
     ];
+
+    public const string CustomPrefix = "custom:";
+
+    public static string CustomKey(string id) => CustomPrefix + id;
+
+    public static bool IsCustom(string key) => key.StartsWith(CustomPrefix, StringComparison.Ordinal);
+
+    public static string CustomId(string key) => key[CustomPrefix.Length..];
 }

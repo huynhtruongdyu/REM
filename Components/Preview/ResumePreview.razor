@@ -169,6 +169,30 @@
                     </section>
                 }
                 break;
+            case var key when SectionDefinitions.IsCustom(key):
+                {
+                    var custom = State.Resume.CustomSections.FirstOrDefault(c => c.Id == SectionDefinitions.CustomId(key));
+                    if (custom is not null && (!string.IsNullOrWhiteSpace(custom.Title) || custom.Items.Count > 0))
+                    {
+                        <section class="rp-section">
+                            <h2>@custom.Title</h2>
+                            @foreach (var x in custom.Items)
+                            {
+                                <div class="rp-entry">
+                                    <div class="rp-entry-head">
+                                        <div>
+                                            <span class="rp-strong">@x.Title</span>
+                                            @if (!string.IsNullOrWhiteSpace(x.Subtitle)) { <div class="rp-org">@x.Subtitle</div> }
+                                        </div>
+                                        <span class="rp-dates">@DateRange(x.StartDate, x.EndDate, x.IsCurrent)</span>
+                                    </div>
+                                    @if (!string.IsNullOrWhiteSpace(x.Description)) { <p class="rp-desc">@x.Description</p> }
+                                </div>
+                            }
+                        </section>
+                    }
+                }
+                break;
         }
     }
 </div>

@@ -3,6 +3,20 @@
 <PersonalInfoEditor />
 
 <div class="d-flex flex-justify-end gap-2 mb-2">
+    <div class="dropdown">
+        <button class="btn btn-sm btn-outline dropdown-toggle" type="button" @onclick="ToggleAddMenu"
+                aria-expanded="@_addMenuOpen">Add section<span class="dropdown-caret"></span></button>
+        @if (_addMenuOpen)
+        {
+            <ul class="dropdown-menu dropdown-menu-end show">
+                <li><button class="dropdown-item" @onclick="AddCustomSection">Custom section</button></li>
+                @foreach (var name in SectionDefinitions.AllSections.Where(s => !State.Resume.SectionOrder.Contains(s)))
+                {
+                    <li><button class="dropdown-item" @onclick="() => AddFixedSection(name)">@name</button></li>
+                }
+            </ul>
+        }
+    </div>
     <button class="btn btn-sm btn-outline" @onclick="() => State.CollapseAllSections()">Collapse all</button>
     <button class="btn btn-sm btn-outline" @onclick="() => State.ExpandAllSections()">Expand all</button>
 </div>
@@ -29,11 +43,47 @@
             case SectionDefinitions.Languages:
                 <LanguageEditor />
                 break;
+            case var key when SectionDefinitions.IsCustom(key):
+                var custom = State.Resume.CustomSections.FirstOrDefault(c => c.Id == SectionDefinitions.CustomId(key));
+                if (custom is not null)
+                {
+                    <CustomSectionEditor Section="custom" />
+                }
+                break;
         }
     </ItemTemplate>
 </SortableList>
 
+@if (_addMenuOpen)
+{
+    <div class="dropdown-backdrop" @onclick="() => _addMenuOpen = false"></div>
+}
+
 @code {
+    private bool _addMenuOpen;
+
+    private void ToggleAddMenu() => _addMenuOpen = !_addMenuOpen;
+
+    private void AddCustomSection()
+    {
+        var section = new CustomSection();
+        State.Resume.CustomSections.Add(section);
+        State.Resume.SectionOrder.Add(SectionDefinitions.CustomKey(section.Id));
+        State.MarkDirty();
+        _addMenuOpen = false;
+    }
+
+    private void AddFixedSection(string name)
+    {
+        if (!State.Resume.SectionOrder.Contains(name))
+        {
+            State.Resume.SectionOrder.Add(name);
+            State.MarkDirty();
+        }
+
+        _addMenuOpen = false;
+    }
+
     private void ReorderSections((int oldIndex, int newIndex) e)
     {
         if (e.oldIndex == e.newIndex)

@@ -1,0 +1,69 @@
+@inject ResumeState State
+
+<EditForm EditContext="State.EditContext">
+    <SectionListEditor Title="@Section.Title"
+                       SectionKey="@(SectionDefinitions.CustomKey(Section.Id))"
+                       Items="Section.Items"
+                       Factory="() => new CustomEntry { Id = Guid.NewGuid() }"
+                       KeySelector="e => e.Id"
+                       Context="item"
+                       CanRename="true"
+                       @bind-TitleValue="Section.Title"
+                       CanRemove="true"
+                       OnRemove="Remove">
+        <ItemFields>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Title</label>
+                    <InputText class="form-control" placeholder="Title" @bind-Value="item.Title" @bind:event="oninput" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Subtitle</label>
+                    <InputText class="form-control" placeholder="Subtitle" @bind-Value="item.Subtitle" @bind:event="oninput" />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Start</label>
+                    <InputDate class="form-control" @bind-Value="item.StartDate" />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">End</label>
+                    <InputDate class="form-control" @bind-Value="item.EndDate" disabled="@item.IsCurrent" />
+                </div>
+                <div class="col-md-4 d-flex flex-items-end">
+                    <label class="form-checkbox">
+                        <input type="checkbox" checked="@item.IsCurrent"
+                               @onchange="e => OnCurrentChanged(item, (bool)(e.Value ?? false))" />
+                        Current
+                    </label>
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Description</label>
+                    <InputTextArea class="form-control" @bind-Value="item.Description" @bind:event="oninput" />
+                </div>
+            </div>
+        </ItemFields>
+    </SectionListEditor>
+</EditForm>
+
+@code {
+    [Parameter]
+    public CustomSection Section { get; set; } = default!;
+
+    private void Remove()
+    {
+        State.Resume.CustomSections.Remove(Section);
+        State.Resume.SectionOrder.Remove(SectionDefinitions.CustomKey(Section.Id));
+        State.MarkDirty();
+    }
+
+    private void OnCurrentChanged(CustomEntry item, bool current)
+    {
+        item.IsCurrent = current;
+        if (current)
+        {
+            item.EndDate = null;
+        }
+
+        State.MarkDirty();
+    }
+}

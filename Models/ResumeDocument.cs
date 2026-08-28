@@ -16,6 +16,8 @@ public class ResumeDocument
 
     public List<Language> Languages { get; set; } = [];
 
+    public List<CustomSection> CustomSections { get; set; } = [];
+
     public List<string> SectionOrder { get; set; } = ["Experience", "Education", "Skills", "Projects", "Certifications", "Languages"];
 
     public List<string> HiddenSections { get; set; } = [];

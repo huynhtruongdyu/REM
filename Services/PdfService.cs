@@ -148,6 +148,26 @@ public static class PdfService
                     }
 
                     break;
+                default:
+                    if (SectionDefinitions.IsCustom(section))
+                    {
+                        var custom = doc.CustomSections.FirstOrDefault(c => c.Id == SectionDefinitions.CustomId(section));
+                        if (custom is not null && (!string.IsNullOrWhiteSpace(custom.Title) || custom.Items.Count > 0))
+                        {
+                            AddSectionHeader(content, custom.Title, accent);
+                            foreach (var x in custom.Items)
+                            {
+                                var head = string.IsNullOrWhiteSpace(x.Subtitle) ? x.Title : $"{x.Title} — {x.Subtitle}";
+                                AddEntryHead(content, head, Range(x.StartDate, x.EndDate, x.IsCurrent));
+                                if (!string.IsNullOrWhiteSpace(x.Description))
+                                {
+                                    content.Add(Text(x.Description, "desc"));
+                                }
+                            }
+                        }
+                    }
+
+                    break;
             }
         }
 

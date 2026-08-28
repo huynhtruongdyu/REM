@@ -228,6 +228,29 @@ public class StorageService
                     }
 
                     break;
+                default:
+                    if (SectionDefinitions.IsCustom(section))
+                    {
+                        var custom = doc.CustomSections.FirstOrDefault(c => c.Id == SectionDefinitions.CustomId(section));
+                        if (custom is not null && (!string.IsNullOrWhiteSpace(custom.Title) || custom.Items.Count > 0))
+                        {
+                            sb.AppendLine($"## {custom.Title}");
+                            foreach (var x in custom.Items)
+                            {
+                                var head = string.IsNullOrWhiteSpace(x.Subtitle) ? x.Title : $"{x.Title} — {x.Subtitle}";
+                                sb.AppendLine($"### {head}");
+                                sb.AppendLine(Range(x.StartDate, x.EndDate, x.IsCurrent));
+                                if (!string.IsNullOrWhiteSpace(x.Description))
+                                {
+                                    sb.AppendLine(x.Description);
+                                }
+
+                                sb.AppendLine();
+                            }
+                        }
+                    }
+
+                    break;
             }
         }
 
