@@ -24,6 +24,9 @@ jobs:
         with:
           dotnet-version: '10.0.x'
 
+      - name: Stamp service worker version
+        run: printf '\n// build:%s\n' "${{ github.run_id }}" >> wwwroot/service-worker.published.js
+
       - name: Publish
         run: dotnet publish REM.csproj -c Release -o release
 
