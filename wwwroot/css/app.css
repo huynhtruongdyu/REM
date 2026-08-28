@@ -443,8 +443,14 @@ code {
 }
 
 .resume-meta {
-    font-size: .72rem;
+    font-size: .75rem;
     color: var(--fgColor-muted);
+}
+
+.resume-status {
+    margin-left: .4rem;
+    font-size: .7rem;
+    line-height: 1.4;
 }
 
 .resume-item-actions {

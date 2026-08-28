@@ -66,10 +66,6 @@
     </div>
 
     <div class="ms-auto d-flex flex-wrap align-items-center gap-2 justify-content-end">
-        <span class="Label @(State.IsDirty ? "Label--warning" : "Label--success")">
-            @(State.IsDirty ? "Unsaved" : "Saved")
-        </span>
-
         <div class="btn-group">
             <button class="btn btn-sm" @onclick="() => State.Undo()" disabled="@(!State.CanUndo)"
                     title="Undo (Ctrl+Z)">Undo</button>
@@ -170,7 +166,15 @@
                             {
                                 <div class="resume-name" title="Double-click to rename" @ondblclick="e => StartRename(e, r.Id)"
                                      @ondblclick:stopPropagation>@r.Name</div>
-                                <div class="resume-meta">@RelativeTime(r.UpdatedAt)</div>
+                                <div class="resume-meta">
+                                    @RelativeTime(r.UpdatedAt)
+                                    @if (r.Id == State.ActiveId)
+                                    {
+                                        <span class="resume-status Label @(State.IsDirty ? "Label--warning" : "Label--success")">
+                                            @(State.IsDirty ? "Unsaved" : "Saved")
+                                        </span>
+                                    }
+                                </div>
                             }
                         </div>
                         @if (_editingId != r.Id)
