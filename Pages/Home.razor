@@ -15,59 +15,9 @@
     </div>
 
     <div class="toolbar-contents @(_mobileMenuOpen ? "d-flex" : "d-none d-md-flex") flex-1 flex-column flex-md-row flex-wrap flex-md-items-center gap-2 w-100">
-        <div class="d-flex flex-wrap flex-items-center gap-3 pl-1 toolbar-selects">
-        <div class="d-flex flex-items-center gap-2 select-group">
-            <label class="form-label mb-0 small" for="themeSelect">Theme</label>
-        <select id="themeSelect" class="form-select form-select-sm w-auto" value="@State.Resume.Theme"
-                @onchange="OnThemeChange">
-            <option value="default">Default</option>
-            <option value="minimal">Minimalism</option>
-            <option value="modern">Modern</option>
-            <option value="classic">Classic</option>
-            <option value="compact">Compact</option>
-            <option value="elegant">Elegant</option>
-            <option value="professional">Professional</option>
-            <option value="creative">Creative</option>
-            <option value="technical">Technical</option>
-            <option value="bold">Bold</option>
-        </select>
-        </div>
-        <div class="d-flex flex-items-center gap-2 select-group">
-            <label class="form-label mb-0 small" for="schemeSelect">Color</label>
-            <select id="schemeSelect" class="form-select form-select-sm w-auto" value="@State.Resume.ColorScheme"
-                @onchange="OnSchemeChange">
-            <option value="blue">Blue</option>
-            <option value="indigo">Indigo</option>
-            <option value="emerald">Emerald</option>
-            <option value="rose">Rose</option>
-            <option value="amber">Amber</option>
-            <option value="violet">Violet</option>
-            <option value="teal">Teal</option>
-            <option value="slate">Slate</option>
-            <option value="red">Red</option>
-            <option value="orange">Orange</option>
-            <option value="pink">Pink</option>
-            <option value="cyan">Cyan</option>
-            <option value="lime">Lime</option>
-            <option value="purple">Purple</option>
-            <option value="black">Black</option>
-        </select>
-        </div>
-        <div class="d-flex flex-items-center gap-2 select-group">
-            <label class="form-label mb-0 small" for="fontSelect">Size</label>
-            <select id="fontSelect" class="form-select form-select-sm w-auto" value="@State.Resume.FontSize"
-                @onchange="OnFontSizeChange">
-            <option value="small">Small</option>
-            <option value="medium">Medium</option>
-            <option value="large">Large</option>
-            <option value="xlarge">Extra Large</option>
-        </select>
-        </div>
-    </div>
-
     <div class="ms-auto d-flex flex-wrap align-items-center gap-2 justify-content-end">
         <button class="btn btn-sm" @onclick="ToggleDarkMode" title="Toggle dark mode">
-            @(_darkMode ? "Light" : "Dark")
+            <Octicons Name="@(_darkMode ? "Sun" : "Moon")" />
         </button>
 
         <div class="btn-group">
@@ -206,7 +156,56 @@
             <div class="editor-pane p-3">
                 <ResumeEditor @key="State.Resume" />
             </div>
-            <div class="preview-pane color-bg-muted p-3">
+            <div class="preview-pane color-bg-muted">
+                <div class="preview-controls d-flex flex-wrap flex-items-center gap-3">
+                    <div class="d-flex flex-items-center gap-2 select-group">
+                        <label class="form-label mb-0 small" for="themeSelect">Theme</label>
+                        <select id="themeSelect" class="form-select form-select-sm w-auto" value="@State.Resume.Theme"
+                                @onchange="OnThemeChange">
+                            <option value="default">Default</option>
+                            <option value="minimal">Minimalism</option>
+                            <option value="modern">Modern</option>
+                            <option value="classic">Classic</option>
+                            <option value="compact">Compact</option>
+                            <option value="elegant">Elegant</option>
+                            <option value="professional">Professional</option>
+                            <option value="creative">Creative</option>
+                            <option value="technical">Technical</option>
+                            <option value="bold">Bold</option>
+                        </select>
+                    </div>
+                    <div class="d-flex flex-items-center gap-2 select-group">
+                        <label class="form-label mb-0 small" for="schemeSelect">Color</label>
+                        <select id="schemeSelect" class="form-select form-select-sm w-auto" value="@State.Resume.ColorScheme"
+                                @onchange="OnSchemeChange">
+                            <option value="blue">Blue</option>
+                            <option value="indigo">Indigo</option>
+                            <option value="emerald">Emerald</option>
+                            <option value="rose">Rose</option>
+                            <option value="amber">Amber</option>
+                            <option value="violet">Violet</option>
+                            <option value="teal">Teal</option>
+                            <option value="slate">Slate</option>
+                            <option value="red">Red</option>
+                            <option value="orange">Orange</option>
+                            <option value="pink">Pink</option>
+                            <option value="cyan">Cyan</option>
+                            <option value="lime">Lime</option>
+                            <option value="purple">Purple</option>
+                            <option value="black">Black</option>
+                        </select>
+                    </div>
+                    <div class="d-flex flex-items-center gap-2 select-group">
+                        <label class="form-label mb-0 small" for="fontSelect">Size</label>
+                        <select id="fontSelect" class="form-select form-select-sm w-auto" value="@State.Resume.FontSize"
+                                @onchange="OnFontSizeChange">
+                            <option value="small">Small</option>
+                            <option value="medium">Medium</option>
+                            <option value="large">Large</option>
+                            <option value="xlarge">Extra Large</option>
+                        </select>
+                    </div>
+                </div>
                 <ResumePreview @key="State.Resume" />
             </div>
         </div>

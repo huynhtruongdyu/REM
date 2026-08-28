@@ -11,13 +11,13 @@
                 <input class="form-control form-control-sm flex-1" placeholder="Section title" @ref="_titleInput"
                        value="@TitleValue" @oninput="e => OnTitleChanged((string?)e.Value)"
                        @onblur="ExitTitleEdit" @onkeydown="OnTitleKey" />
-                <button type="button" class="btn btn-sm btn-link py-0 px-1" title="Done editing title"
+                <button type="button" class="btn btn-sm btn-icon" title="Done editing title"
                         @onclick="ExitTitleEdit" @onclick:stopPropagation><Octicons Name="Check" /></button>
             }
             else
             {
                 <h3 class="Box-title section-drag-handle flex-1 @(IsHidden() ? "text-decoration-line-through color-fg-muted" : "")">@TitleValue</h3>
-                <button type="button" class="btn btn-sm btn-link py-0 px-1" title="Edit section title"
+                <button type="button" class="btn btn-sm btn-icon" title="Edit section title"
                         @onclick="StartTitleEdit" @onclick:stopPropagation><Octicons Name="Pencil" /></button>
             }
         }
@@ -25,18 +25,18 @@
         {
             <h3 class="Box-title section-drag-handle flex-1 @(IsHidden() ? "text-decoration-line-through color-fg-muted" : "")">@Title</h3>
         }
-        <button type="button" class="btn btn-sm btn-link py-0 px-1 section-visibility-toggle"
+        <button type="button" class="btn btn-sm btn-icon section-visibility-toggle"
                 title="@(IsHidden() ? "Show this section" : "Hide this section")" @onclick="ToggleVisibility" @onclick:stopPropagation>
             <Octicons Name="@(IsHidden() ? "EyeClosed" : "Eye")" />
         </button>
         @if (CanRemove)
         {
-            <button type="button" class="btn btn-sm btn-link py-0 px-1 color-fg-danger" title="Remove this section"
+            <button type="button" class="btn btn-sm btn-icon color-fg-danger" title="Remove this section"
                     @onclick="() => OnRemove.InvokeAsync(null)" @onclick:stopPropagation>
                 <Octicons Name="Trash" />
             </button>
         }
-        <button type="button" class="btn btn-sm btn-link py-0 px-1 collapse-toggle" title="Collapse / expand"
+        <button type="button" class="btn btn-sm btn-icon collapse-toggle" title="Collapse / expand"
                 @onclick="ToggleCollapse" @onclick:stopPropagation>
             <Octicons Name="@(State.IsSectionCollapsed(Key) ? "ChevronRight" : "ChevronDown")" />
         </button>
@@ -47,7 +47,7 @@
                 <div class="Box mb-3">
                     <div class="Box-header d-flex flex-justify-between flex-items-center py-2 px-3">
                         <span class="drag-handle" title="Drag to reorder"><Octicons Name="Grabber" /></span>
-                        <button class="btn btn-sm btn-danger" title="Remove this entry" @onclick="() => Remove(item)"><Octicons Name="Trash" /></button>
+                        <button class="btn btn-sm btn-icon color-fg-danger" title="Remove this entry" @onclick="() => Remove(item)"><Octicons Name="Trash" /></button>
                     </div>
                     <div class="Box-body p-3">
                         @ItemFields(item)
