@@ -413,7 +413,6 @@ textarea.form-control {
     border-radius: .55rem;
     cursor: pointer;
     border: 1px solid transparent;
-    transition: background .12s ease, border-color .12s ease;
 }
 
 .resume-item:hover {
@@ -431,6 +430,16 @@ textarea.form-control {
     height: .55rem;
     border-radius: 50%;
     box-shadow: 0 0 0 2px #fff;
+}
+
+.resume-item-icon {
+    flex: 0 0 auto;
+    color: var(--fgColor-muted);
+    visibility: hidden;
+}
+
+.resume-item.active .resume-item-icon {
+    visibility: visible;
 }
 
 .resume-item-main {
@@ -469,7 +478,7 @@ textarea.form-control {
     gap: .1rem;
     opacity: 0;
     transform: translateX(4px);
-    transition: opacity .12s ease, transform .12s ease;
+    transition: none;
 }
 
 .resume-item:hover .hover-actions,
