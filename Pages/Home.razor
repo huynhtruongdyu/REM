@@ -181,12 +181,12 @@
                         {
                             <div class="resume-item-actions">
                                 <button class="btn btn-sm btn-icon rename-btn" title="Rename" @onclick="e => StartRename(e, r.Id)"
-                                        @onclick:stopPropagation>✎</button>
+                                        @onclick:stopPropagation><Octicons Name="Pencil" /></button>
                                 <span class="hover-actions">
                                     <button class="btn btn-sm btn-icon" title="Duplicate" @onclick="e => Duplicate(e, r.Id)"
-                                            @onclick:stopPropagation>⧉</button>
+                                            @onclick:stopPropagation><Octicons Name="Copy" /></button>
                                     <button class="btn btn-sm btn-icon color-fg-danger" title="Delete"
-                                            @onclick="e => Delete(e, r.Id)" @onclick:stopPropagation>🗑</button>
+                                            @onclick="e => Delete(e, r.Id)" @onclick:stopPropagation><Octicons Name="Trash" /></button>
                                 </span>
                             </div>
                         }

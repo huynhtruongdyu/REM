@@ -491,6 +491,11 @@ textarea.form-control {
     background: rgba(0, 0, 0, .06);
 }
 
+.octicon {
+    vertical-align: text-bottom;
+    flex-shrink: 0;
+}
+
 .resume-rename {
     font-size: .8rem;
     padding: .15rem .4rem;
