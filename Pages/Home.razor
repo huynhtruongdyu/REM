@@ -66,6 +66,10 @@
     </div>
 
     <div class="ms-auto d-flex flex-wrap align-items-center gap-2 justify-content-end">
+        <button class="btn btn-sm" @onclick="ToggleDarkMode" title="Toggle dark mode">
+            @(_darkMode ? "Light" : "Dark")
+        </button>
+
         <div class="btn-group">
             <button class="btn btn-sm" @onclick="() => State.Undo()" disabled="@(!State.CanUndo)"
                     title="Undo (Ctrl+Z)">Undo</button>
@@ -231,7 +235,18 @@
         {
             _dotNetRef = DotNetObjectReference.Create(this);
             await JS.InvokeVoidAsync("shortcuts.register", _dotNetRef);
+            var mode = await JS.InvokeAsync<string>("theme.get");
+            _darkMode = mode == "dark";
+            StateHasChanged();
         }
+    }
+
+    private bool _darkMode;
+
+    private async Task ToggleDarkMode()
+    {
+        var mode = await JS.InvokeAsync<string>("theme.toggle");
+        _darkMode = mode == "dark";
     }
 
     private async Task LoadAsync()

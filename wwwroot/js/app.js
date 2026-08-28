@@ -94,6 +94,32 @@ window.exportImagePdf = function (filename) {
     html2pdf().set(opt).from(el).save();
 };
 
+window.theme = {
+    KEY: 'rem-color-mode',
+    apply: function (mode) {
+        if (mode !== 'dark' && mode !== 'light') return 'light';
+        document.documentElement.setAttribute('data-color-mode', mode);
+        try { localStorage.setItem(window.theme.KEY, mode); } catch (e) { }
+        return mode;
+    },
+    toggle: function () {
+        var current = document.documentElement.getAttribute('data-color-mode');
+        return window.theme.apply(current === 'dark' ? 'light' : 'dark');
+    },
+    get: function () {
+        return document.documentElement.getAttribute('data-color-mode') || 'light';
+    },
+    init: function () {
+        var saved;
+        try { saved = localStorage.getItem(window.theme.KEY); } catch (e) { saved = null; }
+        if (saved === 'dark' || saved === 'light') {
+            window.theme.apply(saved);
+        } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            window.theme.apply('dark');
+        }
+    }
+};
+
 window.shortcuts = {
     register: function (dotNetRef) {
         window.__resumeShortcuts = function (e) {

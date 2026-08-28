@@ -27,6 +27,17 @@
     <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png" />
     <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png" />
     <script type="importmap"></script>
+    <script>
+        (function () {
+            try {
+                var m = localStorage.getItem('rem-color-mode');
+                if (m !== 'dark' && m !== 'light') {
+                    m = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+                }
+                if (m === 'dark') document.documentElement.setAttribute('data-color-mode', 'dark');
+            } catch (e) { }
+        })();
+    </script>
 </head>
 
 <body>
