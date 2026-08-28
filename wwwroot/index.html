@@ -51,26 +51,43 @@
     <script src="js/app.js"></script>
     <script src="_framework/blazor.webassembly#[.{fingerprint}].js"></script>
     <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('service-worker.js', { updateViaCache: 'none' })
-                .then(reg => {
-                    // Trigger an update check on every load so new deployments are
-                    // detected immediately instead of waiting for the browser's
-                    // ~24h automatic update throttle.
-                    reg.update();
+        (async function () {
+            if (!('serviceWorker' in navigator)) return;
 
-                    reg.addEventListener('updatefound', () => {
-                        const newWorker = reg.installing;
-                        newWorker.addEventListener('statechange', () => {
-                            // A new worker took over while an old one was controlling:
-                            // reload once so the fresh version is served.
-                            if (newWorker.state === 'activated' && navigator.serviceWorker.controller) {
-                                window.location.reload();
-                            }
-                        });
-                    });
-                });
-        }
+            // Read the deployment build id stamped into the service worker by the
+            // deploy workflow (// build:<run_id>). Fetching with cache:'no-store'
+            // bypasses all caches so we always see the latest deployment.
+            let buildId = '';
+            try {
+                const swText = await fetch('service-worker.js', { cache: 'no-store' }).then(r => r.text());
+                const m = swText.match(/\/\/\s*build:(\S+)/);
+                if (m) buildId = m[1];
+            } catch (e) { }
+
+            const stored = localStorage.getItem('sw-build');
+
+            if (buildId && stored && stored !== buildId) {
+                // A new deployment is live: wipe the old service worker and caches,
+                // then reload so the page re-registers cleanly against the new build.
+                try {
+                    const regs = await navigator.serviceWorker.getRegistrations();
+                    await Promise.all(regs.map(r => r.unregister()));
+                    const keys = await caches.keys();
+                    await Promise.all(keys.map(k => caches.delete(k)));
+                } catch (e) { }
+                localStorage.setItem('sw-build', buildId);
+                window.location.reload();
+                return;
+            }
+            if (buildId) localStorage.setItem('sw-build', buildId);
+
+            // Register (or keep) the service worker. The ?v= query busts any HTTP
+            // cache of the script, and updateViaCache:'none' keeps update checks fresh.
+            const reg = await navigator.serviceWorker.register(
+                'service-worker.js' + (buildId ? '?v=' + buildId : ''),
+                { updateViaCache: 'none' });
+            reg.update();
+        })();
     </script>
 </body>
 
